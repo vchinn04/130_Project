@@ -11,6 +11,14 @@ export default $config({
     };
   },
   async run() {
-    new sst.aws.Nextjs("MyWeb");
+    const bucket = new sst.aws.Bucket("MyBucket", {
+      access: "public"
+    });
+    new sst.aws.Nextjs(
+      "MyWeb",
+      {
+        link: [bucket]
+      }
+    );
   },
 });
