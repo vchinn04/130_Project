@@ -17,7 +17,7 @@ export default $config({
     new sst.aws.Nextjs(
       "MyWeb",
       {
-        link: [bucket]
+        link: []
       }
     );
   },

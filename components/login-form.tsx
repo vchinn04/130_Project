@@ -54,6 +54,7 @@ export function LoginForm() {
           </Link>
         </div>
       </CardContent>
+      <Link href="/">Link to Dashboard</Link>
     </Card>
   )
 }
