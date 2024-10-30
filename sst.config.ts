@@ -18,6 +18,26 @@ export default $config({
       `deploy` command, and are also written to `.sst/output.json`
   */
   async run() {
+
+    const userPool = new sst.aws.CognitoUserPool("MyUserPool");
+
+    const GoogleClientId = new sst.Secret("GOOGLE_CLIENT_ID");
+    const GoogleClientSecret = new sst.Secret("GOOGLE_CLIENT_SECRET");
+
+    userPool.addIdentityProvider("Google", {
+      type: "google",
+      details: {
+        authorize_scopes: "email profile",
+        client_id: GoogleClientId.value,
+        client_secret: GoogleClientSecret.value,
+      },
+      attributes: {
+        email: "email",
+        name: "name",
+        username: "sub",
+      },
+    });
+
     /* Initialize DynamoDB tables.
       Note that these are not the complete schemas - they are just the fields that are
         are being used for indexing. Schemas will be defined under "types" in the app.
