@@ -6,13 +6,25 @@ import "sst"
 export {}
 declare module "sst" {
   export interface Resource {
-    "MyBucket": {
+    "GroupsTable": {
       "name": string
-      "type": "sst.aws.Bucket"
+      "type": "sst.aws.Dynamo"
+    }
+    "MessagesTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
       "url": string
+    }
+    "TeamsTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
+    "UsersTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
   }
 }
