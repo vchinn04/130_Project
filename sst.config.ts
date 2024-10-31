@@ -18,27 +18,6 @@ export default $config({
       `deploy` command, and are also written to `.sst/output.json`
   */
   async run() {
-    const userPool = new sst.aws.CognitoUserPool("MyUserPool");
-
-    const GoogleClientId = new sst.Secret("GOOGLE_CLIENT_ID"); // in password manager
-    const GoogleClientSecret = new sst.Secret("GOOGLE_CLIENT_SECRET"); // in password manager
-    userPool.addIdentityProvider("Google", {
-      type: "google",
-      details: {
-        authorize_scopes: "email profile",
-        client_id: GoogleClientId.value,
-        client_secret: GoogleClientSecret.value,
-      },
-      attributes: {
-        email: "email",
-        name: "name",
-        username: "sub",
-      },
-    });
-
-    // This both binds & creates the client on the user pool, and then returns the client for use in the next step
-    const userPoolClient = userPool.addClient("MyWebUserPoolClient");
-
 
     /* Initialize DynamoDB tables.
       Note that these are not the complete schemas - they are just the fields that are
@@ -120,7 +99,8 @@ export default $config({
       },
     });
 
-    const AUTH_SECRET = new sst.Secret("AUTH_SECRET");
+    const NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = new sst.Secret("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
+    const CLERK_SECRET_KEY = new sst.Secret("CLERK_SECRET_KEY");
 
     // Init the NextJS app resource cluster
     // Originally set up with these values (check the sst source for the actual current values):
@@ -131,15 +111,11 @@ export default $config({
         usersTable,
         groupsTable,
         teamsTable,
-        messagesTable,
-        userPool
+        messagesTable
       ],
       environment: {
-        AUTH_SECRET: AUTH_SECRET.value,
-        AUTH_COGNITO_ID: userPoolClient.id,
-        AUTH_COGNITO_SECRET: userPoolClient.secret,
-        // cognito token issuer URL, minus the part after the pool ID
-        AUTH_COGNITO_ISSUER: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_9d1Zf2foU`,
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
+        CLERK_SECRET_KEY: CLERK_SECRET_KEY.value
       },
     });
 

@@ -29,8 +29,6 @@ import {
 
 import Link from "next/link"
 
-import SignIn from "@/components/sign-in"
-
 // This is sample data.
 const data = {
   teams: [
@@ -269,7 +267,6 @@ export function SidebarLeft({
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
         <Link href="/welcome">Log Out - link to welcome</Link>
-        <SignIn />
         <TeamSwitcher teams={data.teams} />
         <NavMain items={data.navMain} />
       </SidebarHeader>
