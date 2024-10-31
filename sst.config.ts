@@ -18,12 +18,10 @@ export default $config({
       `deploy` command, and are also written to `.sst/output.json`
   */
   async run() {
-
     const userPool = new sst.aws.CognitoUserPool("MyUserPool");
 
-    const GoogleClientId = new sst.Secret("GOOGLE_CLIENT_ID");
-    const GoogleClientSecret = new sst.Secret("GOOGLE_CLIENT_SECRET");
-
+    const GoogleClientId = new sst.Secret("GOOGLE_CLIENT_ID"); // in password manager
+    const GoogleClientSecret = new sst.Secret("GOOGLE_CLIENT_SECRET"); // in password manager
     userPool.addIdentityProvider("Google", {
       type: "google",
       details: {
@@ -37,6 +35,10 @@ export default $config({
         username: "sub",
       },
     });
+
+    // This both binds & creates the client on the user pool, and then returns the client for use in the next step
+    const userPoolClient = userPool.addClient("MyWebUserPoolClient");
+
 
     /* Initialize DynamoDB tables.
       Note that these are not the complete schemas - they are just the fields that are
@@ -57,8 +59,8 @@ export default $config({
           billingMode: "PROVISIONED",
           readCapacity: 5,
           writeCapacity: 5,
-        }
-      }
+        },
+      },
     });
 
     const groupsTable = new sst.aws.Dynamo("GroupsTable", {
@@ -71,8 +73,8 @@ export default $config({
           billingMode: "PROVISIONED",
           readCapacity: 5,
           writeCapacity: 5,
-        }
-      }
+        },
+      },
     });
 
     const teamsTable = new sst.aws.Dynamo("TeamsTable", {
@@ -86,8 +88,8 @@ export default $config({
           billingMode: "PROVISIONED",
           readCapacity: 9,
           writeCapacity: 9,
-        }
-      }
+        },
+      },
     });
 
     const messagesTable = new sst.aws.Dynamo("MessagesTable", {
@@ -112,18 +114,33 @@ export default $config({
               projectionType: "ALL",
               readCapacity: 1,
               writeCapacity: 1,
-            }
-          ]
-        }
-      }
+            },
+          ],
+        },
+      },
     });
+
+    const AUTH_SECRET = new sst.Secret("AUTH_SECRET");
 
     // Init the NextJS app resource cluster
     // Originally set up with these values (check the sst source for the actual current values):
     // DEFAULT_OPEN_NEXT_VERSION = "3.1.6";
     // DEFAULT_CACHE_POLICY_ALLOWED_HEADERS = ["x-open-next-cache-key"];
     const openNextDeployment = new sst.aws.Nextjs("MyWeb", {
-      link: [usersTable, groupsTable, teamsTable, messagesTable],
+      link: [
+        usersTable,
+        groupsTable,
+        teamsTable,
+        messagesTable,
+        userPool
+      ],
+      environment: {
+        AUTH_SECRET: AUTH_SECRET.value,
+        AUTH_COGNITO_ID: userPoolClient.id,
+        AUTH_COGNITO_SECRET: userPoolClient.secret,
+        // cognito token issuer URL, minus the part after the pool ID
+        AUTH_COGNITO_ISSUER: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_9d1Zf2foU`,
+      },
     });
 
     return {

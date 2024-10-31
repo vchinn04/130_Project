@@ -6,6 +6,10 @@ import "sst"
 export {}
 declare module "sst" {
   export interface Resource {
+    "AUTH_SECRET": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "GroupsTable": {
       "name": string
       "type": "sst.aws.Dynamo"
@@ -14,9 +18,27 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Dynamo"
     }
+    "MySecondUserPool": {
+      "id": string
+      "type": "sst.aws.CognitoUserPool"
+    }
+    "MySecondWebUserPoolClient": {
+      "id": string
+      "secret": string
+      "type": "sst.aws.CognitoUserPoolClient"
+    }
+    "MyUserPool": {
+      "id": string
+      "type": "sst.aws.CognitoUserPool"
+    }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
       "url": string
+    }
+    "MyWebUserPoolClient": {
+      "id": string
+      "secret": string
+      "type": "sst.aws.CognitoUserPoolClient"
     }
     "TeamsTable": {
       "name": string
