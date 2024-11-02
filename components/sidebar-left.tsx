@@ -266,7 +266,7 @@ export function SidebarLeft({
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
-        <Link href="/welcome">Log Out - link to welcome</Link>
+        <Link href="/">Log Out - link to welcome</Link>
         <TeamSwitcher teams={data.teams} />
         <NavMain items={data.navMain} />
       </SidebarHeader>
