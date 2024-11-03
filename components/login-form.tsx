@@ -34,7 +34,7 @@ export function LoginForm() {
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
+              <Link href="/team-panel" className="ml-auto inline-block text-sm underline">
                 Forgot your password?
               </Link>
             </div>
@@ -54,6 +54,7 @@ export function LoginForm() {
           </Link>
         </div>
       </CardContent>
+      <Link href="/team-panel">Link to Dashboard</Link>
     </Card>
   )
 }

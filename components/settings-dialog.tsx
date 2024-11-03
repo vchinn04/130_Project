@@ -61,7 +61,7 @@ const data = {
 }
 
 export function SettingsDialog() {
-  const [open, setOpen] = React.useState(true)
+  const [open, setOpen] = React.useState(false) // default state of the dialog is closed (false)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

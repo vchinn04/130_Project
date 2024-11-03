@@ -6,13 +6,33 @@ import "sst"
 export {}
 declare module "sst" {
   export interface Resource {
-    "MyBucket": {
+    "CLERK_SECRET_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GroupsTable": {
       "name": string
-      "type": "sst.aws.Bucket"
+      "type": "sst.aws.Dynamo"
+    }
+    "MessagesTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
       "url": string
+    }
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "TeamsTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
+    "UsersTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
     }
   }
 }
