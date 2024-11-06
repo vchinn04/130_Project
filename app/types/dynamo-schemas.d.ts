@@ -1,4 +1,7 @@
-type UserId = string;
+export type UserId = string;
+export type GroupId = string;
+export type TeamId = string;
+export type MessageId = string;
 
 export type UserEntry = {
   id: UserId;
@@ -25,17 +28,16 @@ export type TeamGroupEntry = {
 };
 
 export type GroupEntry = {
-  groupId: string;
-  joinId: string;
+  groupId: GroupId;
   groupOwner: UserId;
   prompt: string;
   preferencesEnabled: boolean;
-  teams: { [key: string]: TeamGroupEntry };
+  teams: { [key: TeamId]: TeamGroupEntry };
   members: { [key: UserId]: MemberGroupEntry };
 };
 
 export type MessageEntry = {
-  id: string;
+  id: MessageId;
   sender: UserId;
   dateSent: Date;
   messageContent: string;
