@@ -1,7 +1,7 @@
 type UserId = string;
 
 export type UserEntry = {
-  UUID: UserId;
+  Id: UserId;
   Username: string;
   Email: string;
 
@@ -10,8 +10,8 @@ export type UserEntry = {
 
   // We can extract what group team belongs to from the team id since
   // it is a composite of group id and team id
-  Teams: [string];
-  Preferences: [string];
+  Teams: string[];
+  Preferences: string[];
 };
 
 export type MemberGroupEntry = {
@@ -19,23 +19,23 @@ export type MemberGroupEntry = {
   Ready: boolean;
 };
 
+export type TeamGroupEntry = {
+  Locked: boolean;
+  Members: UserId[];
+};
+
 export type GroupEntry = {
   GroupId: string;
+  JoinId: string;
   GroupOwner: UserId;
   Prompt: string;
   PreferencesEnabled: boolean;
-  Teams: [string];
+  Teams: { [key: string]: TeamGroupEntry };
   Members: { [key: UserId]: MemberGroupEntry };
 };
 
-export type TeamEntry = {
-  TeamId: string;
-  Locked: boolean;
-  Members: [UserId];
-};
-
 export type MessageEntry = {
-  UUID: string;
+  Id: string;
   Sender: UserId;
   DateSent: Date;
   MessageContent: string;
