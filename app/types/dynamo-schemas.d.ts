@@ -1,42 +1,42 @@
 type UserId = string;
 
 export type UserEntry = {
-  Id: UserId;
-  Username: string;
-  Email: string;
+  id: UserId;
+  username: string;
+  email: string;
 
   // Key is the group id and value is true if owner, else false
-  Groups: { [key: string]: boolean };
+  groups: { [key: string]: boolean };
 
   // We can extract what group team belongs to from the team id since
   // it is a composite of group id and team id
-  Teams: string[];
-  Preferences: string[];
+  teams: string[];
+  preferences: string[];
 };
 
 export type MemberGroupEntry = {
-  PromptAnswer: string;
-  Ready: boolean;
+  promptAnswer: string;
+  ready: boolean;
 };
 
 export type TeamGroupEntry = {
-  Locked: boolean;
-  Members: UserId[];
+  locked: boolean;
+  members: UserId[];
 };
 
 export type GroupEntry = {
-  GroupId: string;
-  JoinId: string;
-  GroupOwner: UserId;
-  Prompt: string;
-  PreferencesEnabled: boolean;
-  Teams: { [key: string]: TeamGroupEntry };
-  Members: { [key: UserId]: MemberGroupEntry };
+  groupId: string;
+  joinId: string;
+  groupOwner: UserId;
+  prompt: string;
+  preferencesEnabled: boolean;
+  teams: { [key: string]: TeamGroupEntry };
+  members: { [key: UserId]: MemberGroupEntry };
 };
 
 export type MessageEntry = {
-  Id: string;
-  Sender: UserId;
-  DateSent: Date;
-  MessageContent: string;
+  id: string;
+  sender: UserId;
+  dateSent: Date;
+  messageContent: string;
 };
