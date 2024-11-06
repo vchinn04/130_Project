@@ -9,11 +9,11 @@ export type UserEntry = {
   email: string;
 
   // Key is the group id and value is true if owner, else false
-  groups: { [key: string]: boolean };
+  groups: Record<GroupId, boolean>;
 
   // We can extract what group team belongs to from the team id since
   // it is a composite of group id and team id
-  teams: string[];
+  teams: TeamId[];
   preferences: string[];
 };
 
@@ -32,8 +32,8 @@ export type GroupEntry = {
   groupOwner: UserId;
   prompt: string;
   preferencesEnabled: boolean;
-  teams: { [key: TeamId]: TeamGroupEntry };
-  members: { [key: UserId]: MemberGroupEntry };
+  teams: Record<TeamId, TeamGroupEntry>;
+  members: Record<UserId, MemberGroupEntry>;
 };
 
 export type MessageEntry = {
