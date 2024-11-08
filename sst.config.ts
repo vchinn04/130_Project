@@ -117,6 +117,7 @@ export default $config({
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
         CLERK_SECRET_KEY: CLERK_SECRET_KEY.value
       },
+      path: ".",
     });
 
     return {
