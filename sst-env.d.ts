@@ -14,10 +14,6 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Dynamo"
     }
-    "MessagesTable": {
-      "name": string
-      "type": "sst.aws.Dynamo"
-    }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
       "url": string
@@ -25,10 +21,6 @@ declare module "sst" {
     "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": {
       "type": "sst.sst.Secret"
       "value": string
-    }
-    "TeamsTable": {
-      "name": string
-      "type": "sst.aws.Dynamo"
     }
     "UsersTable": {
       "name": string

@@ -36,8 +36,8 @@ export default $config({
       transform: {
         table: {
           billingMode: "PROVISIONED",
-          readCapacity: 5,
-          writeCapacity: 5,
+          readCapacity: 1,
+          writeCapacity: 1,
         },
       },
     });
@@ -50,54 +50,54 @@ export default $config({
       transform: {
         table: {
           billingMode: "PROVISIONED",
-          readCapacity: 5,
-          writeCapacity: 5,
+          readCapacity: 1,
+          writeCapacity: 1,
         },
       },
     });
 
-    const teamsTable = new sst.aws.Dynamo("TeamsTable", {
-      fields: {
-        groupId: "string", // UUID linked from GroupsTable
-        teamId: "number",
-      },
-      primaryIndex: { hashKey: "groupId", rangeKey: "teamId" },
-      transform: {
-        table: {
-          billingMode: "PROVISIONED",
-          readCapacity: 9,
-          writeCapacity: 9,
-        },
-      },
-    });
+    // const teamsTable = new sst.aws.Dynamo("TeamsTable", {
+    //   fields: {
+    //     groupId: "string", // UUID linked from GroupsTable
+    //     teamId: "number",
+    //   },
+    //   primaryIndex: { hashKey: "groupId", rangeKey: "teamId" },
+    //   transform: {
+    //     table: {
+    //       billingMode: "PROVISIONED",
+    //       readCapacity: 1,
+    //       writeCapacity: 1,
+    //     },
+    //   },
+    // });
 
-    const messagesTable = new sst.aws.Dynamo("MessagesTable", {
-      fields: {
-        chatInstanceId: "string", // either a groupId or a team Primary Key depending on the chat
-        timestamp: "string",
-        senderID: "string",
-      },
-      primaryIndex: { hashKey: "chatInstanceId", rangeKey: "timestamp" },
-      // a better term would probably be "secondaryIndexes"
-      transform: {
-        table: {
-          billingMode: "PROVISIONED",
-          readCapacity: 5,
-          writeCapacity: 5,
-          globalSecondaryIndexes: [
-            // This index is for querying all of the messages from a user from within given chat
-            {
-              name: "sendersIndexedByChat",
-              hashKey: "chatInstanceId",
-              rangeKey: "senderID",
-              projectionType: "ALL",
-              readCapacity: 1,
-              writeCapacity: 1,
-            },
-          ],
-        },
-      },
-    });
+    // const messagesTable = new sst.aws.Dynamo("MessagesTable", {
+    //   fields: {
+    //     chatInstanceId: "string", // either a groupId or a team Primary Key depending on the chat
+    //     timestamp: "string",
+    //     senderID: "string",
+    //   },
+    //   primaryIndex: { hashKey: "chatInstanceId", rangeKey: "timestamp" },
+    //   // a better term would probably be "secondaryIndexes"
+    //   transform: {
+    //     table: {
+    //       billingMode: "PROVISIONED",
+    //       readCapacity: 1,
+    //       writeCapacity: 1,
+    //       globalSecondaryIndexes: [
+    //         // This index is for querying all of the messages from a user from within given chat
+    //         {
+    //           name: "sendersIndexedByChat",
+    //           hashKey: "chatInstanceId",
+    //           rangeKey: "senderID",
+    //           projectionType: "ALL",
+    //           readCapacity: 1,
+    //           writeCapacity: 1,
+    //         },
+    //       ],
+    //     },
+    //   },
+    // });
 
     const NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = new sst.Secret("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
     const CLERK_SECRET_KEY = new sst.Secret("CLERK_SECRET_KEY");
@@ -108,10 +108,10 @@ export default $config({
     // DEFAULT_CACHE_POLICY_ALLOWED_HEADERS = ["x-open-next-cache-key"];
     const openNextDeployment = new sst.aws.Nextjs("MyWeb", {
       link: [
-        usersTable,
-        groupsTable,
-        teamsTable,
-        messagesTable
+        // usersTable,
+        // groupsTable,
+        // teamsTable,
+        // messagesTable
       ],
       environment: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
