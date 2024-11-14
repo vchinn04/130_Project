@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "npx sst dev --print-logs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.677.0",
