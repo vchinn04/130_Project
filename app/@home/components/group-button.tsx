@@ -1,31 +1,12 @@
 "use client";
 import React from "react";
-import {
-  UserCircle,
-  Settings,
-  // MessageCircle,
-  Users,
-  Hash,
-  Bell,
-  PlusCircle,
-  ChevronDown,
-  ChevronRight,
-} from "lucide-react";
-import Link from "next/link";
+import { Settings, ChevronRight } from "lucide-react";
 import { GroupEntry, GroupId } from "../../types/dynamo-schemas";
 import {
-  Sidebar,
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarHeader,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupAction,
-  SidebarGroupContent,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
+  SidebarMenuAction,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
@@ -72,6 +53,7 @@ export default function GroupButton({
                   <TeamButton
                     key={key}
                     teamId={key}
+                    groupOwner={groupData.groupOwner}
                     teamData={groupData.teams[key]}
                     selectedCollective={selectedCollective}
                     setSelectedCollective={setSelectedCollective}
@@ -80,6 +62,9 @@ export default function GroupButton({
               })}
             </SidebarMenuSub>
           </CollapsibleContent>
+          <SidebarMenuAction>
+            <Settings />
+          </SidebarMenuAction>
         </SidebarMenuItem>
       </Collapsible>
     </>
