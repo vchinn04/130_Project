@@ -1,3 +1,4 @@
+"use client";
 import {
 	Card,
 	CardContent,
@@ -106,7 +107,7 @@ const PopUp = ({
 									}}
 								/>
 								<label htmlFor="ready" className="text-gray-600">
-									Ready
+									Ready to be matched
 								</label>
 							</div>
 						</>
@@ -114,17 +115,12 @@ const PopUp = ({
 				</CardContent>
 				{isIdValid && (
 					<CardFooter className="flex justify-center pt-4">
-						<div className={`${isChecked ? "" : "cursor-not-allowed"}`}>
 							<Button
-								className={`px-6 py-2 rounded-lg shadow-md text-purple-700 ${
-									isChecked ? "bg-purple-200 hover:bg-purple-300" : "bg-gray-300"
-								}`}
+								className={`px-6 py-2 rounded-lg shadow-md text-purple-700 bg-purple-200 hover:bg-purple-300`}
 								onClick={handleSubmit}
-								disabled={!isChecked}
 							>
 								Confirm
 							</Button>
-						</div>
 					</CardFooter>
 				)}
 			</Card>

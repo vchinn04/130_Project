@@ -11,7 +11,7 @@ import {
     PlusCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import PopUp from './PopUp';
+import PopUp from '../@home/components/PopUp';
 import { useState } from 'react';
 import { Button } from "@/components/ui/button"
 export default function TeamPanel() {
