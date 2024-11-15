@@ -29,9 +29,9 @@ export type TeamGroupEntry = {
 
 export type GroupEntry = {
   groupId: GroupId;
+  groupName: string;
   groupOwner: UserId;
   prompt: string;
-  preferencesEnabled: boolean;
   teams: Record<TeamId, TeamGroupEntry>;
   members: Record<UserId, MemberGroupEntry>;
 };
