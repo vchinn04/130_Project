@@ -79,9 +79,9 @@ const PopUp = ({
 					</button>
 				</CardHeader>
 				<CardContent className="space-y-4">
-								<label htmlFor="team-id" className="font-semibold">Team ID:</label>
+					<label htmlFor="team-id" className="font-semibold">Team ID:</label>
 					<Input
-                    id="team-id"
+						id="team-id"
 						placeholder="test"
 						className="bg-gray-100 text-gray-500"
 						onChange={handleIdChange}
@@ -114,17 +114,17 @@ const PopUp = ({
 				</CardContent>
 				{isIdValid && (
 					<CardFooter className="flex justify-center pt-4">
-						<Button
-							className={`bg-${
-								isChecked ? "purple-200" : "gray-300"
-							} text-purple-700 px-6 py-2 rounded-lg shadow-md ${
-								isChecked ? "" : "cursor-not-allowed"
-							}`}
-							onClick={handleSubmit}
-							disabled={!isChecked}
-						>
-							Confirm
-						</Button>
+						<div className={`${isChecked ? "" : "cursor-not-allowed"}`}>
+							<Button
+								className={`px-6 py-2 rounded-lg shadow-md text-purple-700 ${
+									isChecked ? "bg-purple-200 hover:bg-purple-300" : "bg-gray-300"
+								}`}
+								onClick={handleSubmit}
+								disabled={!isChecked}
+							>
+								Confirm
+							</Button>
+						</div>
 					</CardFooter>
 				)}
 			</Card>
