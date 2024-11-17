@@ -15,16 +15,23 @@ import { View } from "./view-button";
 import ViewButton from "./view-button";
 import MembersSidebar from "./members-sidebar";
 import { UserButton } from "@clerk/nextjs";
+import CreateGroupButton from "./create-group-button"; // Import the CreateGroupButton component
 
 export default function CollectiveSidebar({
-  groups,
+  groups: initialGroups,
 }: {
   groups: Record<GroupId, GroupEntry>;
 }) {
-  console.log(groups);
+  const [groups, setGroups] = useState(initialGroups);
+  const [selectedCollective, setSelectedCollective] = useState("");
+  const [selectedView, setSelectedView] = useState(View.Groups);
 
-  let [selectedCollective, setSelectedCollective] = useState("");
-  let [selectedView, setSelectedView] = useState(View.Groups);
+  const handleCreateGroup = (newGroup) => {
+    setGroups((prevGroups) => ({
+      ...prevGroups,
+      [newGroup.groupId]: newGroup,
+    }));
+  };
 
   return (
     <>
@@ -40,7 +47,6 @@ export default function CollectiveSidebar({
             </div>
           </div>
         </SidebarHeader>
-
         <SidebarContent>
           <SidebarMenu>
             {/* Channels Section */}
@@ -72,7 +78,6 @@ export default function CollectiveSidebar({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          {" "}
           <div className="m-0 py-2 border-t border-gray-700">
             <ViewButton
               selectedView={selectedView}
@@ -80,9 +85,11 @@ export default function CollectiveSidebar({
               setSelectedCollective={setSelectedCollective}
             />
           </div>
+          <div className="p-4">
+            <CreateGroupButton onCreateGroup={handleCreateGroup} /> {/* Add the CreateGroupButton component */}
+          </div>
         </SidebarFooter>
       </Sidebar>
-
       <MembersSidebar groups={groups}> </MembersSidebar>
     </>
   );
