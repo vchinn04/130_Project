@@ -4,7 +4,11 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function CreateGroupButton() {
+interface CreateGroupButtonProps {
+  onCreateGroup: (group: { groupId: string; groupName: string; groupDescription: string; prompt: string; ownerAnswer: string; teams: Record<string, unknown> }) => void;
+}
+
+export default function CreateGroupButton({ onCreateGroup }: CreateGroupButtonProps) {
   const [formData, setFormData] = useState({
     groupName: "",
     groupDescription: "",
@@ -27,9 +31,23 @@ export default function CreateGroupButton() {
       return;
     }
 
-    // Add logic to create the group
-    const newGroupId = "12345"; // Replace with actual group ID logic
+    // Generate a unique group ID
+    const newGroupId = `group-${Date.now()}`;
     setGroupId(newGroupId);
+
+    // Create the new group object
+    const newGroup = {
+      groupId: newGroupId,
+      groupName: formData.groupName,
+      groupDescription: formData.groupDescription,
+      prompt: formData.prompt,
+      ownerAnswer: formData.ownerAnswer,
+      teams: {}, // Initialize with an empty teams object
+    };
+
+    // Call the onCreateGroup function to update the state in the parent component
+    onCreateGroup(newGroup);
+
     alert(`Group created with ID: ${newGroupId}`);
   };
 
