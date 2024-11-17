@@ -83,7 +83,7 @@ export default function CollectiveSidebar({
         </SidebarFooter>
       </Sidebar>
 
-      <MembersSidebar groups={groups}> </MembersSidebar>
+      <MembersSidebar groups={groups}/>
     </>
   );
 }
