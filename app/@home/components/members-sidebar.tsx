@@ -14,6 +14,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
+import { GroupSettingsModal } from "./group-settings-modal";
 
 export default function MembersSidebar({
   groups,
@@ -42,11 +43,13 @@ export default function MembersSidebar({
           {selectedCollective == "" ? (
             "None Selected"
           ) : (
-            <>Members - {member_id_arr.length}</>
+            <div>
+              <GroupSettingsModal/>
+              Members - {member_id_arr.length}
+            </div>
           )}
         </div>
       </SidebarHeader>
-
       <SidebarContent className="flex items-center">
         <SidebarGroup>
           <SidebarGroupContent>

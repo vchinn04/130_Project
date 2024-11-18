@@ -83,7 +83,6 @@ export default function CollectiveSidebar({
           </div>
         </SidebarFooter>
       </Sidebar>
-
       <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
