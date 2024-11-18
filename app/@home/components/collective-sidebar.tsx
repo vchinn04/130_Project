@@ -62,6 +62,7 @@ export default function CollectiveSidebar({
                       <TeamButton
                         key={tkey}
                         teamId={tkey}
+                        groupOwner={groups[key].groupOwner}
                         teamData={groups[key].teams[tkey]}
                         selectedCollective={selectedCollective}
                         setSelectedCollective={setSelectedCollective}
@@ -82,8 +83,7 @@ export default function CollectiveSidebar({
           </div>
         </SidebarFooter>
       </Sidebar>
-
-      <MembersSidebar groups={groups}/>
+      <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
 }

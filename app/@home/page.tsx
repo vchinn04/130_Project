@@ -11,7 +11,7 @@ const groups: Record<GroupId, GroupEntry> = {
     groupName: "CoolGroup",
     prompt: "What you like to do?",
     teams: {
-      team1id: {
+      groupid1_teamid1: {
         locked: false,
         members: ["member1"],
       },
@@ -33,17 +33,17 @@ const groups: Record<GroupId, GroupEntry> = {
     groupName: "CoolGroup2",
     prompt: "What you like to do?",
     teams: {
-      team12d: {
+      groupid2_team12d: {
         locked: false,
-        members: ["member2"],
+        members: ["userid1"],
       },
     },
     members: {
-      userid1: {
+      userid2: {
         promptAnswer: "Stuff",
         ready: true,
       },
-      member1: {
+      userid1: {
         promptAnswer: "Cool Stuff",
         ready: true,
       },
@@ -55,17 +55,21 @@ const groups: Record<GroupId, GroupEntry> = {
     groupName: "CoolGroup3",
     prompt: "What you like to do?",
     teams: {
-      team3id: {
+      groupid3_team3id: {
         locked: false,
         members: ["member3"],
       },
     },
     members: {
-      userid1: {
+      userid3: {
         promptAnswer: "Stuff",
         ready: true,
       },
-      member1: {
+      member3: {
+        promptAnswer: "Cool Stuff",
+        ready: true,
+      },
+      userid1: {
         promptAnswer: "Cool Stuff",
         ready: true,
       },
