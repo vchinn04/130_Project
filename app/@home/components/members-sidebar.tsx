@@ -9,6 +9,7 @@ import {
   SidebarHeader,
   SidebarContent,
 } from "@/components/ui/sidebar";
+import { GroupSettingsModal } from "./group-settings-modal";
 
 export default function MembersSidebar({
   groups,
@@ -20,11 +21,12 @@ export default function MembersSidebar({
       <Sidebar side="right" className="dark w-64 bg-gray-300 text-gray-100">
         <SidebarHeader>
           <div className="p-4 border-b border-gray-700">
-            <div>
+            <div className="grid justify-items-center">
               <Link href="/" className="text-center">
                 {" "}
                 Members - 5{" "}
               </Link>
+              <GroupSettingsModal/>
             </div>
           </div>
         </SidebarHeader>

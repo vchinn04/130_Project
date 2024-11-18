@@ -83,6 +83,6 @@ export default async function Home() {
 
         {/* Main Content */}
       </SidebarProvider>
-    </div>
+     </div>
   );
 }
