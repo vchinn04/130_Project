@@ -44,7 +44,7 @@ export default function MembersSidebar({
             "None Selected"
           ) : (
             <div>
-              <GroupSettingsModal/>
+              <GroupSettingsModal />
               Members - {member_id_arr.length}
             </div>
           )}

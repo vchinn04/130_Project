@@ -16,6 +16,7 @@ import ViewButton from "./view-button";
 import MembersSidebar from "./members-sidebar";
 import { UserButton } from "@clerk/nextjs";
 import Main from "./Main";
+import Chat from "./chat";
 
 export default function CollectiveSidebar({
   groups,
@@ -84,7 +85,11 @@ export default function CollectiveSidebar({
           </div>
         </SidebarFooter>
       </Sidebar>
-      <Main/>
+      <Chat
+        selectedCollective={selectedCollective}
+        setSelectedCollective={setSelectedCollective}
+      />
+      <Main />
       <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
