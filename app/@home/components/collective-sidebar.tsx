@@ -37,13 +37,15 @@ export default function CollectiveSidebar({
     <>
       <Sidebar className="dark w-64 bg-gray-900 text-gray-100">
         <SidebarHeader>
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex">
+          <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+            <div className="flex items-center">
               <UserButton />
               <Link href="/" className="flex ml-3 items-end">
-                {" "}
-                Match.io{" "}
+                Match.io
               </Link>
+            </div>
+            <div className="ml-2"> {/* Adjust the margin to ml-2 */}
+              <CreateGroupButton onCreateGroup={handleCreateGroup} /> {/* Wrap in a div with margin */}
             </div>
           </div>
         </SidebarHeader>
@@ -84,9 +86,6 @@ export default function CollectiveSidebar({
               setSelectedView={setSelectedView}
               setSelectedCollective={setSelectedCollective}
             />
-          </div>
-          <div className="p-4">
-            <CreateGroupButton onCreateGroup={handleCreateGroup} /> {/* Add the CreateGroupButton component */}
           </div>
         </SidebarFooter>
       </Sidebar>
