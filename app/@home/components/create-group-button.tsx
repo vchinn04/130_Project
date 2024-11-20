@@ -4,11 +4,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface CreateGroupButtonProps {
-  onCreateGroup: (group: { groupId: string; groupName: string; groupDescription: string; prompt: string; ownerAnswer: string; teams: Record<string, unknown> }) => void;
-}
-
-export default function CreateGroupButton({ onCreateGroup }: CreateGroupButtonProps) {
+export default function CreateGroupButton({ onCreateGroup }) {
   const [formData, setFormData] = useState({
     groupName: "",
     groupDescription: "",
@@ -31,21 +27,19 @@ export default function CreateGroupButton({ onCreateGroup }: CreateGroupButtonPr
       return;
     }
 
-    // Generate a unique group ID
+    // Generate a unique group ID -> placeholder for now
     const newGroupId = `group-${Date.now()}`;
     setGroupId(newGroupId);
 
-    // Create the new group object
     const newGroup = {
       groupId: newGroupId,
       groupName: formData.groupName,
       groupDescription: formData.groupDescription,
       prompt: formData.prompt,
       ownerAnswer: formData.ownerAnswer,
-      teams: {}, // Initialize with an empty teams object
+      teams: {}, 
     };
 
-    // Call the onCreateGroup function to update the state in the parent component
     onCreateGroup(newGroup);
 
     alert(`Group created with ID: ${newGroupId}`);
@@ -58,52 +52,70 @@ export default function CreateGroupButton({ onCreateGroup }: CreateGroupButtonPr
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Group</DialogTitle>
-          <DialogDescription>Fill out the form to create a new group.</DialogDescription>
+          <DialogTitle className="text-lg font-semibold">Create Group</DialogTitle>
+          <DialogDescription className="text-sm text-gray-500">Fill out the form to create a new group.</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <Input
-            name="groupName"
-            placeholder="Group Name"
-            value={formData.groupName}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="groupDescription"
-            placeholder="Group Description"
-            value={formData.groupDescription}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded-md"
-          />
-          <select
-            name="prompt"
-            value={formData.prompt}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded-md"
-          >
-            <option value="">Select a prompt</option>
-            <option value="prompt1">Prompt 1</option>
-            <option value="prompt2">Prompt 2</option>
-          </select>
-          <Input
-            name="ownerAnswer"
-            placeholder="Prompt Answer"
-            value={formData.ownerAnswer}
-            onChange={handleChange}
-          />
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <div>
+            <label htmlFor="groupName" className="block text-sm font-medium text-gray-700">Group Name</label>
+            <Input
+              id="groupName"
+              name="groupName"
+              placeholder="Group Name"
+              value={formData.groupName}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="groupDescription" className="block text-sm font-medium text-gray-700">Group Description</label>
+            <textarea
+              id="groupDescription"
+              name="groupDescription"
+              placeholder="Group Description"
+              value={formData.groupDescription}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full p-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <label htmlFor="prompt" className="block text-sm font-medium text-gray-700">Prompt</label>
+            <select
+              id="prompt"
+              name="prompt"
+              value={formData.prompt}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full p-2 border rounded-md"
+            >
+              <option value="">Select a prompt</option>
+              <option value="prompt1">Prompt 1</option>
+              <option value="prompt2">Prompt 2</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="ownerAnswer" className="block text-sm font-medium text-gray-700">Prompt Answer</label>
+            <Input
+              id="ownerAnswer"
+              name="ownerAnswer"
+              placeholder="Prompt Answer"
+              value={formData.ownerAnswer}
+              onChange={handleChange}
+              className="mt-1 block w-full"
+            />
+          </div>
           {error && <p className="text-red-500">{error}</p>}
-          <Button type="submit">Create Group</Button>
+          <Button type="submit" className="w-full">Create Group</Button>
         </form>
         {groupId && (
-          <div>
+          <div className="mt-4">
             <p>Group created with ID: {groupId}</p>
           </div>
         )}
         <DialogClose asChild>
-          <Button>Close</Button>
+          <Button className="mt-4 w-full">Close</Button>
         </DialogClose>
       </DialogContent>
     </Dialog>

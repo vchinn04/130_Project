@@ -44,8 +44,8 @@ export default function CollectiveSidebar({
                 Match.io
               </Link>
             </div>
-            <div className="ml-2"> {/* Adjust the margin to ml-2 */}
-              <CreateGroupButton onCreateGroup={handleCreateGroup} /> {/* Wrap in a div with margin */}
+            <div className="ml-2"> {}
+              <CreateGroupButton onCreateGroup={handleCreateGroup} /> {}
             </div>
           </div>
         </SidebarHeader>
