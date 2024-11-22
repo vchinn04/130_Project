@@ -59,24 +59,18 @@ export default function GenerateTeamsButton() {
             <div className="space-y-4 mt-4">
               <div className="flex items-center justify-between">
                 <span>Include only those who have completed the prompt</span>
-                <Checkbox
-                  checked={IncludeOnlyPromptCompleted}
-                  onCheckedChange={(checked) => setIncludeOnlyPromptCompleted(true)}
-                />
+                <Checkbox/>
               </div>
               <div className="flex items-center justify-between">
                 <span>Include all users (regardless of team's locked status)</span>
-                <Checkbox
-                  checked={IncludeAll}
-                  onCheckedChange={(checked) => setIncludeAll(true)}
-                />
+                <Checkbox/>
               </div>
             </div>
   
-            {/* Close Button */}
+            {/* Confirm/Submit Button */}
             <div className="mt-6 flex justify-end">
               <Button variant="outline" onClick={() => setIsOpen(false)}>
-                Close
+                Confirm
               </Button>
             </div>
           </DialogContent>
