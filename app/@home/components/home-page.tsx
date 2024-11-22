@@ -15,11 +15,8 @@ import { View } from "./view-button";
 import ViewButton from "./view-button";
 import MembersSidebar from "./members-sidebar";
 import { UserButton } from "@clerk/nextjs";
-import CreateGroupButton from "./create-group-button"; // Import the CreateGroupButton component
-import Main from "./Main";
-import Chat from "./chat";
 
-export default function CollectiveSidebar({
+export default function HomePage({
   groups: initialGroups,
 }: {
   groups: Record<GroupId, GroupEntry>;
@@ -27,13 +24,6 @@ export default function CollectiveSidebar({
   const [groups, setGroups] = useState(initialGroups);
   const [selectedCollective, setSelectedCollective] = useState("");
   const [selectedView, setSelectedView] = useState(View.Groups);
-
-  const handleCreateGroup = (newGroup) => {
-    setGroups((prevGroups) => ({
-      ...prevGroups,
-      [newGroup.groupId]: newGroup,
-    }));
-  };
 
   return (
     <>
@@ -45,9 +35,6 @@ export default function CollectiveSidebar({
               <Link href="/" className="flex ml-3 items-end">
                 Match.io
               </Link>
-            </div>
-            <div className="ml-2"> {}
-              <CreateGroupButton onCreateGroup={handleCreateGroup} /> {}
             </div>
           </div>
         </SidebarHeader>
@@ -92,11 +79,7 @@ export default function CollectiveSidebar({
           </div>
         </SidebarFooter>
       </Sidebar>
-      <Chat
-        selectedCollective={selectedCollective}
-        setSelectedCollective={setSelectedCollective}
-      />
-      <Main />      <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
+      <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
 }
