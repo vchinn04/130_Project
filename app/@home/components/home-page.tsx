@@ -45,10 +45,12 @@ export default function CollectiveSidebar({
               <Link href="/" className="flex ml-3 items-end">
                 Match.io
               </Link>
-            </div>
-            <div className="ml-2"> {}
+            </div> 
+            
+            {/* <div className="ml-2"> {}
               <CreateGroupButton onCreateGroup={handleCreateGroup} /> {}
-            </div>
+            </div>  */}
+            
           </div>
         </SidebarHeader>
         <SidebarContent>
