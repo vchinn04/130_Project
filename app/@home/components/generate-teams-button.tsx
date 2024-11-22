@@ -41,11 +41,30 @@ export default function GenerateTeamsButton() {
     // States for the checkboxes
     const [IncludeOnlyPromptCompleted, setIncludeOnlyPromptCompleted] = React.useState(false);
     const [IncludeAll, setIncludeAll] = React.useState(false);
-  
+
+    // Function to handle form submission
+    const handleGenerateTeams = () => {
+        console.log("Generating teams with settings:");
+        console.log("Include Only Prompt Completed:", IncludeOnlyPromptCompleted);
+        console.log("Include All Users:", IncludeAll);
+
+        // Add OpenAI API call or other logic here
+
+        // Close the dialog after submission
+        setIsOpen(false);
+    };
+    const handleOnOpen = () => {
+        setIsOpen(true);
+        setIncludeOnlyPromptCompleted(false);
+        setIncludeAll(false); 
+        //maybe these get added to group settings within the db so they get saved?
+        //or we can have it just always be false when reopened
+    }
+
     return (
       <div>
         {/* Button to open the popup */}
-        <Button onClick={() => setIsOpen(true)}>Generate Teams</Button>
+        <Button onClick={() => handleOnOpen()}> Generate Teams</Button>
   
         {/* Dialog (popup) */}
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -59,20 +78,29 @@ export default function GenerateTeamsButton() {
             <div className="space-y-4 mt-4">
               <div className="flex items-center justify-between">
                 <span>Include only those who have completed the prompt</span>
-                <Checkbox/>
+                <Checkbox
+                   id="includeOnlyPromptCompleted"
+                   checked={IncludeOnlyPromptCompleted} // Controlled by state
+                   onCheckedChange={(checked) => setIncludeOnlyPromptCompleted(checked === true)} // Updates state
+                />
               </div>
               <div className="flex items-center justify-between">
                 <span>Include all users (regardless of team's locked status)</span>
-                <Checkbox/>
+                <Checkbox
+                    id="includeAll"
+                    checked = {IncludeAll}
+                    onCheckedChange={(checked) => setIncludeAll(checked === true)}
+                />
               </div>
             </div>
   
             {/* Confirm/Submit Button */}
             <div className="mt-6 flex justify-end">
-              <Button variant="outline" onClick={() => setIsOpen(false)}>
+              <Button variant="outline" onClick={() => handleGenerateTeams()}>
                 Confirm
               </Button>
             </div>
+
           </DialogContent>
         </Dialog>
       </div>
