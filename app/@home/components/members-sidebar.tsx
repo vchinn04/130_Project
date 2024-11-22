@@ -15,7 +15,18 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { GroupSettingsModal } from "./group-settings-modal";
+import GenerateTeamsButton from "./generate-teams-button";
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * The MembersSidebar component displays a sidebar with information about the currently selected collective.
+ *
+ * @param {Record<GroupId, GroupEntry>} groups - A mapping of group IDs to their respective GroupEntry objects.
+ * @param {string} selectedCollective - The ID of the currently selected collective.
+ *
+ * @returns A JSX element representing the MembersSidebar component.
+ */
+/******  679a6ac9-301b-4409-847a-aac36ea9f6f8  *******/
 export default function MembersSidebar({
   groups,
   selectedCollective,
@@ -45,7 +56,11 @@ export default function MembersSidebar({
           ) : (
             <div>
               <GroupSettingsModal />
-              Members - {member_id_arr.length}
+              <div className="mt-4">
+                <GenerateTeamsButton />
+              </div>
+              {/* Members - {member_id_arr.length} */}
+              <div className="mt-2">Members - {member_id_arr.length}</div>
             </div>
           )}
         </div>
