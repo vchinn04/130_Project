@@ -16,6 +16,8 @@ import ViewButton from "./view-button";
 import MembersSidebar from "./members-sidebar";
 import { UserButton } from "@clerk/nextjs";
 import CreateGroupButton from "./create-group-button"; // Import the CreateGroupButton component
+import Main from "./Main";
+import Chat from "./chat";
 
 export default function CollectiveSidebar({
   groups: initialGroups,
@@ -70,6 +72,7 @@ export default function CollectiveSidebar({
                       <TeamButton
                         key={tkey}
                         teamId={tkey}
+                        groupOwner={groups[key].groupOwner}
                         teamData={groups[key].teams[tkey]}
                         selectedCollective={selectedCollective}
                         setSelectedCollective={setSelectedCollective}
@@ -89,7 +92,11 @@ export default function CollectiveSidebar({
           </div>
         </SidebarFooter>
       </Sidebar>
-      <MembersSidebar groups={groups}> </MembersSidebar>
+      <Chat
+        selectedCollective={selectedCollective}
+        setSelectedCollective={setSelectedCollective}
+      />
+      <Main />      <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
 }

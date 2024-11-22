@@ -108,8 +108,8 @@ export default $config({
     // DEFAULT_CACHE_POLICY_ALLOWED_HEADERS = ["x-open-next-cache-key"];
     const openNextDeployment = new sst.aws.Nextjs("MyWeb", {
       link: [
-        // usersTable,
-        // groupsTable,
+        usersTable,
+        groupsTable,
         // teamsTable,
         // messagesTable
       ],
