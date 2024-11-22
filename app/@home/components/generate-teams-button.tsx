@@ -38,27 +38,31 @@ import {
 export default function GenerateTeamsButton() {
     const [isOpen, setIsOpen] = React.useState(false); // State to control the Dialog (popup)
   
-    // States for the checkboxes
+    //states for the checkboxes
     const [IncludeOnlyPromptCompleted, setIncludeOnlyPromptCompleted] = React.useState(false);
     const [IncludeAll, setIncludeAll] = React.useState(false);
 
-    // Function to handle form submission
+    //function to handle form submission
     const handleGenerateTeams = () => {
         console.log("Generating teams with settings:");
         console.log("Include Only Prompt Completed:", IncludeOnlyPromptCompleted);
         console.log("Include All Users:", IncludeAll);
 
         // Add OpenAI API call or other logic here
+            //if include all is true, send all users to openai api
+            //if include only prompt completed is true, send only those who have completed the prompt
 
         // Close the dialog after submission
         setIsOpen(false);
     };
+
+    //function to handle opening the popup
     const handleOnOpen = () => {
         setIsOpen(true);
-        setIncludeOnlyPromptCompleted(false);
-        setIncludeAll(false); 
         //maybe these get added to group settings within the db so they get saved?
         //or we can have it just always be false when reopened
+        setIncludeOnlyPromptCompleted(false);
+        setIncludeAll(false); 
     }
 
     return (
@@ -75,28 +79,43 @@ export default function GenerateTeamsButton() {
             </DialogHeader>
   
             {/* Checkboxes */}
-            <div className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <span>Include only those who have completed the prompt</span>
+            <div className="flex flex-col space-y-3">
+              <div className="flex items-center gap-3">
                 <Checkbox
                    id="includeOnlyPromptCompleted"
-                   checked={IncludeOnlyPromptCompleted} // Controlled by state
+                   checked={IncludeOnlyPromptCompleted}
                    onCheckedChange={(checked) => setIncludeOnlyPromptCompleted(checked === true)} // Updates state
+                   className="h-5 w-5"
                 />
+                <label
+                    htmlFor="includeOnlyPromptCompleted"
+                    className="text-md font-large flex-1 leading-tight"
+                >
+                    Include only those who have completed the prompt
+                </label>
               </div>
-              <div className="flex items-center justify-between">
-                <span>Include all users (regardless of team's locked status)</span>
+              <div className="flex items-center gap-3">
                 <Checkbox
                     id="includeAll"
                     checked = {IncludeAll}
-                    onCheckedChange={(checked) => setIncludeAll(checked === true)}
+                    onCheckedChange={(checked) => setIncludeAll(checked === true)} // Updates state
+                    className="h-5 w-5"
                 />
+                <label
+                    htmlFor="includeAll"
+                    className="text-md font-large flex-1 leading-tight" // max-w-[75%]
+                >
+                    Include all users (regardless of team's locked status)
+                </label>
               </div>
             </div>
   
             {/* Confirm/Submit Button */}
             <div className="mt-6 flex justify-end">
-              <Button variant="outline" onClick={() => handleGenerateTeams()}>
+              <Button 
+                id="ConfirmGenerateTeams"
+                variant="outline" 
+                onClick={() => handleGenerateTeams()}>
                 Confirm
               </Button>
             </div>
