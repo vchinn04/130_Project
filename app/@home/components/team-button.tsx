@@ -37,15 +37,16 @@ export default function TeamButton({
   return (
     <>
       {teamData.members.includes(owner_id) || owner_id == groupOwner ? (
-        <SidebarMenuItem>
+        <SidebarMenuItem className="primary primary-foreground">
           <SidebarMenuButton
             onClick={handleClick}
             isActive={selectedCollective == teamId}
+            className="animate-appear"
           >
             {teamId}
           </SidebarMenuButton>
           {owner_id == groupOwner ? (
-            <SidebarMenuAction onClick={lockHandler}>
+            <SidebarMenuAction className="animate-appear" onClick={lockHandler}>
               {isLocked ? <Lock /> : <LockOpen />}
             </SidebarMenuAction>
           ) : (

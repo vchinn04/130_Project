@@ -14,6 +14,7 @@ import {
   CollapsibleContent,
 } from "@radix-ui/react-collapsible";
 import TeamButton from "./team-button";
+import { GroupSettingsModal } from "./group-settings-modal";
 
 export default function GroupButton({
   groupId,
@@ -39,9 +40,15 @@ export default function GroupButton({
             <SidebarMenuButton
               onClick={handleClick}
               isActive={selectedCollective == groupId}
+              className="animate-appear"
             >
+              {/* className={
+                selectedCollective == groupId
+                  ? "bg-primary_purple-hover"
+                  : "hover:bg-primary_purple-hover"
+              } */}
               {groupData.groupName}{" "}
-              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+              <ChevronRight className="animate-appear ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
 
@@ -62,9 +69,7 @@ export default function GroupButton({
               })}
             </SidebarMenuSub>
           </CollapsibleContent>
-          <SidebarMenuAction>
-            <Settings />
-          </SidebarMenuAction>
+          <GroupSettingsModal />
         </SidebarMenuItem>
       </Collapsible>
     </>
