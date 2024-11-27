@@ -73,7 +73,7 @@ export default function Chat({
       {selectedCollective == "" ? (
         <></>
       ) : (
-        <div className="flex flex-col grow justify-center rounded-md mx-7 mt-7 mb-[3.5rem] p-0 bg-gray-300">
+        <div className="animate-appear flex flex-col grow justify-center rounded-md mx-7 mt-7 mb-[3.5rem] p-0 bg-white shadow-md">
           <div className="flex justify-between items-center px-1 border-b border-gray-400">
             <h2 className="text-lg pl-1">Chat Name</h2>
             <Button

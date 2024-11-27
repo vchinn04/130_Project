@@ -78,7 +78,7 @@ const groups: Record<GroupId, GroupEntry> = {
 };
 export default async function Home() {
   return (
-    <div className="flex h-screen bg-gray-800">
+    <div className="flex h-screen bg-gray-200">
       <SidebarProvider>
         {/* Left Sidebar - Channel List */}
         {/* <div className="w-64 bg-gray-900 text-gray-100 flex flex-col"> */}

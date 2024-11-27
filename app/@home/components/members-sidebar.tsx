@@ -48,17 +48,19 @@ export default function MembersSidebar({
   }
 
   return (
-    <Sidebar side="right" className="dark w-64 bg-gray-300 text-gray-100">
+    <Sidebar side="right" className="w-64 bg-gray-300">
+      {" "}
+      {/*text-gray-100*/}
       <SidebarHeader>
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-gray-700 primary-foreground">
           {selectedCollective == "" ? (
             "None Selected"
           ) : (
             <div>
-              <GroupSettingsModal />
-              <div className="mt-4">
+              {/* <GroupSettingsModal /> */}
+              {/* <div className="mt-4">
                 <GenerateTeamsButton />
-              </div>
+              </div> */}
               {/* Members - {member_id_arr.length} */}
               <div className="mt-2">Members - {member_id_arr.length}</div>
             </div>
@@ -72,8 +74,9 @@ export default function MembersSidebar({
               return (
                 <div
                   key={id}
-                  className="flex p-4 justify-items-start	items-center text-gray-200 py-2"
+                  className="animate-appear flex p-4 justify-items-start	items-center py-2 primary-foreground"
                 >
+                  {/* text-gray-200*/}
                   <UserCircle className="mr-2" />
                   <span>{id}</span>
                 </div>
