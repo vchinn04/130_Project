@@ -1,13 +1,6 @@
 export type UserId = string;  // sourced from cognito
 export type GroupId = string; // UUID v4, generated at creation time
 
-// Interface to unify the different sub-table types for consistent type checking and refactoring
-export interface TableType {
-  info: "info";
-  members: "members";
-  teams: "teams";
-}
-
 // ------------------------------------------------------------------------------------------------
 
 export type Team = {
@@ -16,7 +9,7 @@ export type Team = {
 
 export interface TeamSubtable {
   groupId: GroupId;            // dynamodb hash key (primary index)
-  subTable: TableType.teams;   // dynamodb sort key (secondary index)
+  subTable: "teams";           // dynamodb sort key (secondary index)
   generatedAt: Date;           // the date and time the teams were last generated
   teams: Team[];               // list of the teams in the group (team numbers derived from index in array)
 };
@@ -32,7 +25,7 @@ export type ImmutableTeamSubtableProperties = Omit<
 
 export interface GroupInfoSubtable {
   groupId: GroupId;           // dynamodb hash key (primary index)
-  subTable: TableType.info;   // dynamodb sort key (secondary index)
+  subTable: "info";           // dynamodb sort key (secondary index)
   createdAt: Date;            // the date and time the group was created
   displayName: string;        // optionally-settable name of the group
   owner: UserId;              // the user id of the group owner, who can make changes and manage the group
@@ -59,6 +52,6 @@ export type Member = {
 
 export interface GroupMembersSubtable {
   groupId: GroupId;                 // dynamodb hash key (primary index)
-  subTable: TableType.members;      // dynamodb sort key (secondary index)
+  subTable: "members";      // dynamodb sort key (secondary index)
   members: Record<UserId, Member>;  // json object of the members in the group
 };
