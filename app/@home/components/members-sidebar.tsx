@@ -15,7 +15,18 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { GroupSettingsModal } from "./group-settings-modal";
+import GenerateTeamsButton from "./generate-teams-button";
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * The MembersSidebar component displays a sidebar with information about the currently selected collective.
+ *
+ * @param {Record<GroupId, GroupEntry>} groups - A mapping of group IDs to their respective GroupEntry objects.
+ * @param {string} selectedCollective - The ID of the currently selected collective.
+ *
+ * @returns A JSX element representing the MembersSidebar component.
+ */
+/******  679a6ac9-301b-4409-847a-aac36ea9f6f8  *******/
 export default function MembersSidebar({
   groups,
   selectedCollective,
@@ -37,15 +48,21 @@ export default function MembersSidebar({
   }
 
   return (
-    <Sidebar side="right" className="dark w-64 bg-gray-300 text-gray-100">
+    <Sidebar side="right" className="w-64 bg-gray-300">
+      {" "}
+      {/*text-gray-100*/}
       <SidebarHeader>
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-gray-700 primary-foreground">
           {selectedCollective == "" ? (
             "None Selected"
           ) : (
             <div>
-              <GroupSettingsModal/>
-              Members - {member_id_arr.length}
+              {/* <GroupSettingsModal /> */}
+              {/* <div className="mt-4">
+                <GenerateTeamsButton />
+              </div> */}
+              {/* Members - {member_id_arr.length} */}
+              <div className="mt-2">Members - {member_id_arr.length}</div>
             </div>
           )}
         </div>
@@ -57,8 +74,9 @@ export default function MembersSidebar({
               return (
                 <div
                   key={id}
-                  className="flex p-4 justify-items-start	items-center text-gray-200 py-2"
+                  className="animate-appear flex p-4 justify-items-start	items-center py-2 primary-foreground"
                 >
+                  {/* text-gray-200*/}
                   <UserCircle className="mr-2" />
                   <span>{id}</span>
                 </div>

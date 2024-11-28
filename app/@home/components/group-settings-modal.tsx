@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   Bell,
   Check,
@@ -14,7 +14,7 @@ import {
   Paintbrush,
   Settings,
   Video,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   Breadcrumb,
@@ -23,10 +23,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import {
-  Button,
-} from "@/components/ui/button"
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -34,7 +32,7 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -43,17 +41,17 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from "@/components/ui/sidebar"
-import { Textarea } from "@/components/ui/textarea"
-import { Footer } from "react-day-picker"
-import { Switch } from "@/components/ui/switch"
-
+} from "@/components/ui/sidebar";
+import { Textarea } from "@/components/ui/textarea";
+import { Footer } from "react-day-picker";
+import { Switch } from "@/components/ui/switch";
 
 export function GroupSettingsModal() {
-  const [open, setOpen] = React.useState(false) // default state of the dialog is closed (false)
+  const [open, setOpen] = React.useState(false); // default state of the dialog is closed (false)
   const groupId = "group-ID-Placeholder"; // replace with the react query "use query when you hook-up the backend"
   const [unsavedChanges, setUnsavedChanges] = React.useState(false); // replace with a state hooked-up to the query logic
   const [prompt, setPrompt] = React.useState(""); // replace with a state hooked-up to the query logic
@@ -66,7 +64,10 @@ export function GroupSettingsModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">Group Settings</Button>
+        {/* <Button size="sm">Group Settings</Button> */}
+        <SidebarMenuAction>
+          <Settings className="animate-appear" />
+        </SidebarMenuAction>
       </DialogTrigger>
       <DialogContent className="overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[800px]">
         <DialogTitle className="sr-only">Settings</DialogTitle>
@@ -74,21 +75,20 @@ export function GroupSettingsModal() {
           Customize your settings here.
         </DialogDescription>
         <SidebarProvider className="items-start">
-          <Sidebar collapsible="none" className="hidden md:flex gap-4 border-r border-gray-700">
-            <SidebarHeader>
-              Group ID: {groupId}
-            </SidebarHeader>
+          <Sidebar
+            collapsible="none"
+            className="hidden md:flex gap-4 border-r border-gray-700"
+          >
+            <SidebarHeader>Group ID: {groupId}</SidebarHeader>
             <SidebarContent className="flex gap-4">
               <SidebarGroup>
                 <SidebarGroupContent>
                   <SidebarMenu className="flex flex-col gap-6">
                     <SidebarMenuItem>
                       Allow people to join by group ID
-                      <Switch/>
+                      <Switch />
                     </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      *Other Settings*
-                    </SidebarMenuItem>
+                    <SidebarMenuItem>*Other Settings*</SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
@@ -96,9 +96,7 @@ export function GroupSettingsModal() {
           </Sidebar>
           <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
             <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-              <div className="flex items-center gap-2 px-4">
-                Current Prompt
-              </div>
+              <div className="flex items-center gap-2 px-4">Current Prompt</div>
             </header>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-1">
               <Textarea
@@ -113,21 +111,21 @@ export function GroupSettingsModal() {
                 {unsavedChanges ? "Warning - unsaved changes" : ""}
               </p>
               <div className="flex gap-4">
-              <DialogClose asChild>
-                <Button variant="outline" className="justify-end">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button variant="default" className="justify-end">
-                  Save
-                </Button>
-              </DialogClose>
+                <DialogClose asChild>
+                  <Button variant="outline" className="justify-end">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button variant="default" className="justify-end">
+                    Save
+                  </Button>
+                </DialogClose>
               </div>
             </Footer>
           </main>
         </SidebarProvider>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

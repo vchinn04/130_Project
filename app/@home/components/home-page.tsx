@@ -19,6 +19,7 @@ import CreateGroupButton from "./create-group-button"; // Import the CreateGroup
 import Main from "./Main";
 import Chat from "./chat";
 
+// import { createGroup } from "@/lib/data";
 export default function CollectiveSidebar({
   groups: initialGroups,
 }: {
@@ -33,21 +34,28 @@ export default function CollectiveSidebar({
       ...prevGroups,
       [newGroup.groupId]: newGroup,
     }));
+    // let a = createGroup("Coolio", "Prompt", "PromptAnswer");
+    // console.log("SERVER RESPONSE: ", a);
   };
 
   return (
     <>
-      <Sidebar className="dark w-64 bg-gray-900 text-gray-100">
+      <Sidebar className="w-64 bg-gray-900">
+        {" "}
+        {/*text-gray-100*/}
         <SidebarHeader>
-          <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+          <div className="p-4 border-b border-gray-700 flex justify-between items-center primary-foreground">
             <div className="flex items-center">
               <UserButton />
               <Link href="/" className="flex ml-3 items-end">
                 Match.io
               </Link>
             </div>
-            <div className="ml-2"> {}
-              <CreateGroupButton onCreateGroup={handleCreateGroup} /> {}
+
+            <div className="ml-2">
+              {" "}
+              {}
+              {/* <CreateGroupButton onCreateGroup={handleCreateGroup} /> {} */}
             </div>
           </div>
         </SidebarHeader>
@@ -83,7 +91,7 @@ export default function CollectiveSidebar({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          <div className="m-0 py-2 border-t border-gray-700">
+          <div className="m-0 py-2 border-t border-gray-700 primary-foreground">
             <ViewButton
               selectedView={selectedView}
               setSelectedView={setSelectedView}
@@ -96,7 +104,11 @@ export default function CollectiveSidebar({
         selectedCollective={selectedCollective}
         setSelectedCollective={setSelectedCollective}
       />
-      <Main />      <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
+      <Main
+        selectedCollective={selectedCollective}
+        handleCreateGroup={handleCreateGroup}
+      />{" "}
+      <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
 }
