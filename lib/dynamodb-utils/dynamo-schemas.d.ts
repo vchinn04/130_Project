@@ -31,8 +31,8 @@ export interface GroupInfoSubtable {
   owner: UserId;              // the user id of the group owner, who can make changes and manage the group
   locked: boolean;            // whether new people can join a group.
   prompt: string;             // the prompt that the group owner sets for new members to join the group
-  memberCount: number;        // the number of members in the group
-  teamCount: number;          // the number of teams in the group
+  memberCount: number;        // the target number of members per-team in the group
+  teamCount: number;          // the target number of teams to generate in the group
 };
 
 // properties that are immutable for GroupInfoSubtable entries after they are created
