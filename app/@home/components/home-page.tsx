@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { GroupEntry, GroupId } from "../../types/dynamo-schemas";
+import { GroupEntry, GroupId } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import GroupButton from "./group-button";
 import TeamButton from "./team-button";
 import {

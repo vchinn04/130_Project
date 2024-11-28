@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-import { TeamId, TeamGroupEntry } from "../../types/dynamo-schemas";
+import { TeamId, TeamGroupEntry } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import { LockOpen, Lock } from "lucide-react";
 
 import {

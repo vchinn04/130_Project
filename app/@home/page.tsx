@@ -1,6 +1,6 @@
 import React from "react";
 
-import { GroupEntry, GroupId } from "../types/dynamo-schemas";
+import { GroupEntry, GroupId } from "../../lib/dynamodb-utils/dynamo-schemas";
 import CollectiveSidebar from "./components/home-page";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
