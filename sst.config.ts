@@ -37,8 +37,8 @@ export default $config({
       transform: {
         table: {
           billingMode: "PROVISIONED",
-          readCapacity: 2,
-          writeCapacity: 2,
+          readCapacity: 1,
+          writeCapacity: 1,
         },
       },
     });

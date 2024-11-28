@@ -27,7 +27,6 @@ export type GroupInfoSubtable = {
 export type Member = {
   ready: boolean;               // indicates if the user is ready to be matched to a team
   promptAnswer: string;         // link to an s3 object where the user's prompt answer is stored
-  team: TeamId;                 // everyone should default to be in team 0, which can just represent the "default" (unmatched) team
 };
 
 export type GroupMembersSubtable = {
