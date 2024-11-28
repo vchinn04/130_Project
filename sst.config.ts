@@ -18,7 +18,6 @@ export default $config({
       `deploy` command, and are also written to `.sst/output.json`
   */
   async run() {
-
     /* Initialize DynamoDB tables.
       Note that these are not the complete schemas - they are just the fields that are
         are being used for indexing. Schemas will be defined under "types" in the app.
@@ -28,11 +27,13 @@ export default $config({
         `PrimaryKey: { PartitionKey, SortKey }` <- docs syntax
         `primaryIndex: { hashKey, rangeKey }` <- SST syntax
     */
-    const usersTable = new sst.aws.Dynamo("UsersTable", {
+
+    const groupsTable = new sst.aws.Dynamo("GroupsTable", {
       fields: {
-        userId: "string", // UUID
+        groupId: "string", // UUID
+        subTable: "string", // members | teams | info
       },
-      primaryIndex: { hashKey: "userId" },
+      primaryIndex: { hashKey: "groupId", rangeKey: "subTable" },
       transform: {
         table: {
           billingMode: "PROVISIONED",
@@ -42,19 +43,19 @@ export default $config({
       },
     });
 
-    const groupsTable = new sst.aws.Dynamo("GroupsTable", {
-      fields: {
-        groupId: "string", // UUID
-      },
-      primaryIndex: { hashKey: "groupId" },
-      transform: {
-        table: {
-          billingMode: "PROVISIONED",
-          readCapacity: 1,
-          writeCapacity: 1,
-        },
-      },
-    });
+    // const usersTable = new sst.aws.Dynamo("UsersTable", {
+    //   fields: {
+    //     userId: "string", // UUID
+    //   },
+    //   primaryIndex: { hashKey: "userId" },
+    //   transform: {
+    //     table: {
+    //       billingMode: "PROVISIONED",
+    //       readCapacity: 1,
+    //       writeCapacity: 1,
+    //     },
+    //   },
+    // });
 
     // const teamsTable = new sst.aws.Dynamo("TeamsTable", {
     //   fields: {
@@ -108,14 +109,14 @@ export default $config({
     // DEFAULT_CACHE_POLICY_ALLOWED_HEADERS = ["x-open-next-cache-key"];
     const openNextDeployment = new sst.aws.Nextjs("MyWeb", {
       link: [
-        usersTable,
+        // usersTable,
         groupsTable,
         // teamsTable,
         // messagesTable
       ],
       environment: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
-        CLERK_SECRET_KEY: CLERK_SECRET_KEY.value
+        CLERK_SECRET_KEY: CLERK_SECRET_KEY.value,
       },
       path: ".",
     });

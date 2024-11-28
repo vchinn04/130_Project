@@ -1,7 +1,11 @@
 "use client";
 import React, { useState } from "react";
 
-import { TeamId, TeamGroupEntry } from "../../types/dynamo-schemas";
+import {
+  GroupId,
+  Team,
+  TeamId,
+} from "../../../lib/dynamodb-utils/dynamo-schemas";
 import { LockOpen, Lock } from "lucide-react";
 
 import {
@@ -12,21 +16,24 @@ import {
 
 export default function TeamButton({
   teamId,
+  groupId,
   groupOwner,
   teamData,
   selectedCollective,
   setSelectedCollective,
 }: {
   teamId: TeamId;
+  groupId: GroupId;
   groupOwner: string;
-  teamData: TeamGroupEntry;
+  teamData: Team;
   selectedCollective: any;
   setSelectedCollective: any;
 }) {
+  let teamStringId: string = groupId + "_" + teamId;
   console.log(teamData);
   let owner_id = "userid1";
   function handleClick() {
-    setSelectedCollective(teamId);
+    setSelectedCollective(teamStringId);
   }
 
   let [isLocked, setIsLocked] = useState(false);
@@ -40,10 +47,10 @@ export default function TeamButton({
         <SidebarMenuItem className="primary primary-foreground">
           <SidebarMenuButton
             onClick={handleClick}
-            isActive={selectedCollective == teamId}
+            isActive={selectedCollective == teamStringId}
             className="animate-appear"
           >
-            {teamId}
+            {"Team #" + (teamId + 1)}
           </SidebarMenuButton>
           {owner_id == groupOwner ? (
             <SidebarMenuAction className="animate-appear" onClick={lockHandler}>

@@ -1,7 +1,10 @@
 "use client";
 import React from "react";
 import { Settings, ChevronRight } from "lucide-react";
-import { GroupEntry, GroupId } from "../../types/dynamo-schemas";
+import {
+  FullGroupTable,
+  GroupId,
+} from "../../../lib/dynamodb-utils/dynamo-schemas";
 import {
   SidebarMenuButton,
   SidebarMenuItem,
@@ -23,7 +26,7 @@ export default function GroupButton({
   setSelectedCollective,
 }: {
   groupId: GroupId;
-  groupData: GroupEntry;
+  groupData: FullGroupTable;
   selectedCollective: any;
   setSelectedCollective: any;
 }) {
@@ -47,7 +50,7 @@ export default function GroupButton({
                   ? "bg-primary_purple-hover"
                   : "hover:bg-primary_purple-hover"
               } */}
-              {groupData.groupName}{" "}
+              {groupData.displayName}{" "}
               <ChevronRight className="animate-appear ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
@@ -55,13 +58,14 @@ export default function GroupButton({
           {/*Team Buttons*/}
           <CollapsibleContent>
             <SidebarMenuSub>
-              {Object.keys(groupData.teams).map((key) => {
+              {groupData.teams.map((team, index) => {
                 return (
                   <TeamButton
-                    key={key}
-                    teamId={key}
-                    groupOwner={groupData.groupOwner}
-                    teamData={groupData.teams[key]}
+                    key={index}
+                    teamId={index}
+                    groupId={groupData.groupId}
+                    groupOwner={groupData.owner}
+                    teamData={team} //{groupData.teams[key]}
                     selectedCollective={selectedCollective}
                     setSelectedCollective={setSelectedCollective}
                   />
