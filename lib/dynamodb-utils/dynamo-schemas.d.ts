@@ -1,10 +1,16 @@
 export type UserId = string;  // sourced from cognito
+
 export type GroupId = string; // UUID v4, generated at creation time
+export type TeamId = number;
+
+export type FullGroupTable = GroupInfoSubtable &
+  GroupMembersSubtable &
+  TeamSubtable;
 
 // ------------------------------------------------------------------------------------------------
 
 export type Team = {
-  members: UserId[];          // simple list of the members in the team
+  members: UserId[]; // simple list of the members in the team
 };
 
 export interface TeamSubtable {
@@ -33,6 +39,7 @@ export interface GroupInfoSubtable {
   prompt: string;             // the prompt that the group owner sets for new members to join the group
   memberCount: number;        // the target number of members per-team in the group
   teamCount: number;          // the target number of teams to generate in the group
+
 };
 
 // properties that are immutable for GroupInfoSubtable entries after they are created
@@ -46,12 +53,12 @@ export type ImmutableGroupInfoProperties = Omit<
 // ------------------------------------------------------------------------------------------------
 
 export type Member = {
-  ready: boolean;               // indicates if the user is ready to be matched to a team
-  promptAnswer: string;         // link to an s3 object where the user's prompt answer is stored
+  ready: boolean; // indicates if the user is ready to be matched to a team
+  promptAnswer: string; // link to an s3 object where the user's prompt answer is stored
 };
 
 export interface GroupMembersSubtable {
   groupId: GroupId;                 // dynamodb hash key (primary index)
-  subTable: "members";      // dynamodb sort key (secondary index)
+  subTable: "members";              // dynamodb sort key (secondary index)
   members: Record<UserId, Member>;  // json object of the members in the group
 };

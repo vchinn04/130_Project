@@ -1,10 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function CreateGroupButton({ onCreateGroup }) {
+export default function CreateGroupButton({
+  onCreateGroup,
+}: {
+  onCreateGroup: any;
+}) {
   const [formData, setFormData] = useState({
     groupName: "",
     groupDescription: "",
@@ -14,7 +26,11 @@ export default function CreateGroupButton({ onCreateGroup }) {
   const [error, setError] = useState("");
   const [groupId, setGroupId] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -37,7 +53,7 @@ export default function CreateGroupButton({ onCreateGroup }) {
       groupDescription: formData.groupDescription,
       prompt: formData.prompt,
       ownerAnswer: formData.ownerAnswer,
-      teams: {}, 
+      teams: {},
     };
 
     onCreateGroup(newGroup);
@@ -52,12 +68,21 @@ export default function CreateGroupButton({ onCreateGroup }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">Create Group</DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">Fill out the form to create a new group.</DialogDescription>
+          <DialogTitle className="text-lg font-semibold">
+            Create Group
+          </DialogTitle>
+          <DialogDescription className="text-sm text-gray-500">
+            Fill out the form to create a new group.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
-            <label htmlFor="groupName" className="block text-sm font-medium text-gray-700">Group Name</label>
+            <label
+              htmlFor="groupName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Group Name
+            </label>
             <Input
               id="groupName"
               name="groupName"
@@ -69,7 +94,12 @@ export default function CreateGroupButton({ onCreateGroup }) {
             />
           </div>
           <div>
-            <label htmlFor="groupDescription" className="block text-sm font-medium text-gray-700">Group Description</label>
+            <label
+              htmlFor="groupDescription"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Group Description
+            </label>
             <textarea
               id="groupDescription"
               name="groupDescription"
@@ -81,7 +111,12 @@ export default function CreateGroupButton({ onCreateGroup }) {
             />
           </div>
           <div>
-            <label htmlFor="prompt" className="block text-sm font-medium text-gray-700">Prompt</label>
+            <label
+              htmlFor="prompt"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Prompt
+            </label>
             <select
               id="prompt"
               name="prompt"
@@ -96,7 +131,12 @@ export default function CreateGroupButton({ onCreateGroup }) {
             </select>
           </div>
           <div>
-            <label htmlFor="ownerAnswer" className="block text-sm font-medium text-gray-700">Prompt Answer</label>
+            <label
+              htmlFor="ownerAnswer"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Prompt Answer
+            </label>
             <Input
               id="ownerAnswer"
               name="ownerAnswer"
@@ -107,7 +147,9 @@ export default function CreateGroupButton({ onCreateGroup }) {
             />
           </div>
           {error && <p className="text-red-500">{error}</p>}
-          <Button type="submit" className="w-full">Create Group</Button>
+          <Button type="submit" className="w-full">
+            Create Group
+          </Button>
         </form>
         {groupId && (
           <div className="mt-4">
