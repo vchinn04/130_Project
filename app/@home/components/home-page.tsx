@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { GroupEntry, GroupId } from "../../../lib/dynamodb-utils/dynamo-schemas";
+import {
+  FullGroupTable,
+  GroupId,
+} from "../../../lib/dynamodb-utils/dynamo-schemas";
 import GroupButton from "./group-button";
 import TeamButton from "./team-button";
 import {
@@ -23,13 +26,13 @@ import Chat from "./chat";
 export default function CollectiveSidebar({
   groups: initialGroups,
 }: {
-  groups: Record<GroupId, GroupEntry>;
+  groups: Record<GroupId, FullGroupTable>;
 }) {
   const [groups, setGroups] = useState(initialGroups);
   const [selectedCollective, setSelectedCollective] = useState("");
   const [selectedView, setSelectedView] = useState(View.Groups);
 
-  const handleCreateGroup = (newGroup) => {
+  const handleCreateGroup = (newGroup: FullGroupTable) => {
     setGroups((prevGroups) => ({
       ...prevGroups,
       [newGroup.groupId]: newGroup,
@@ -75,13 +78,14 @@ export default function CollectiveSidebar({
                   );
                 })
               : Object.keys(groups).map((key) => {
-                  return Object.keys(groups[key].teams).map((tkey) => {
+                  return groups[key].teams.map((team, tkey) => {
                     return (
                       <TeamButton
                         key={tkey}
                         teamId={tkey}
-                        groupOwner={groups[key].groupOwner}
-                        teamData={groups[key].teams[tkey]}
+                        groupId={key}
+                        groupOwner={groups[key].owner}
+                        teamData={team} //{groups[key].teams[tkey]}
                         selectedCollective={selectedCollective}
                         setSelectedCollective={setSelectedCollective}
                       />
