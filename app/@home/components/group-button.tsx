@@ -4,6 +4,7 @@ import { Settings, ChevronRight } from "lucide-react";
 import {
   FullGroupTable,
   GroupId,
+  Team,
 } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import {
   SidebarMenuButton,
@@ -58,7 +59,7 @@ export default function GroupButton({
           {/*Team Buttons*/}
           <CollapsibleContent>
             <SidebarMenuSub>
-              {groupData.teams.map((team, index) => {
+              {groupData.teams.map((team: Team, index: number) => {
                 return (
                   <TeamButton
                     key={index}

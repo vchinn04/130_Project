@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   FullGroupTable,
   GroupId,
+  Team,
 } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import GroupButton from "./group-button";
 import TeamButton from "./team-button";
@@ -78,7 +79,7 @@ export default function CollectiveSidebar({
                   );
                 })
               : Object.keys(groups).map((key) => {
-                  return groups[key].teams.map((team, tkey) => {
+                  return groups[key].teams.map((team: Team, tkey: number) => {
                     return (
                       <TeamButton
                         key={tkey}

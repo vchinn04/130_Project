@@ -42,7 +42,7 @@ export default function MembersSidebar({
     member_id_arr = Object.keys(collective_data.members);
   }
 
-  if (id_split.length > 1) {
+  if (collective_data !== undefined && id_split.length > 1) {
     collective_data = collective_data.teams[parseInt(id_split[1])];
     member_id_arr = collective_data.members;
   }
