@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Settings, ChevronRight } from "lucide-react";
-import { GroupEntry, GroupId } from "../../types/dynamo-schemas";
+import { GroupEntry, GroupId } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import {
   SidebarMenuButton,
   SidebarMenuItem,

@@ -5,7 +5,7 @@ import {
   GroupEntry,
   GroupId,
   TeamGroupEntry,
-} from "../../types/dynamo-schemas";
+} from "../../../lib/dynamodb-utils/dynamo-schemas";
 
 import {
   Sidebar,
