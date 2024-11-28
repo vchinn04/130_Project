@@ -1,44 +1,34 @@
 import { DynamoDB } from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
+import { Resource } from "sst";
+import {
+  GroupId,
+  UserId,
+  GroupInfoSubtable,
+  GroupMembersSubtable,
+  TeamSubtable,
+  Member
+} from "./dynamo-schemas";
 
 const dynamoDB = new DynamoDB.DocumentClient();
-const TABLE_NAME = "GroupsTable";
-
-// Types for the different subtables
-interface GroupInfo {
-  groupId: string;
-  subTable: "info";
-  name: string;
-  description?: string;
-  createdAt: string;
-  // Add other group info fields as needed
-}
-
-interface GroupMember {
-  groupId: string;
-  subTable: "members";
-  userId: string;
-  role: "admin" | "member";
-  joinedAt: string;
-}
-
-interface GroupTeam {
-  groupId: string;
-  subTable: "teams";
-  teamId: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-}
+const TABLE_NAME = Resource.GroupsTable.name; // Bind the table name to the resource defined in sst.config.ts
 
 // Group Info CRUD
-export async function createGroupInfo(groupData: Omit<GroupInfo, "groupId" | "subTable" | "createdAt">) {
+export async function createGroupInfo(
+  owner: UserId,
+  data: Pick<GroupInfoSubtable, "displayName" | "prompt">
+): Promise<GroupInfoSubtable> {
   const groupId = uuidv4();
-  const item: GroupInfo = {
+  const item: GroupInfoSubtable = {
     groupId,
     subTable: "info",
-    createdAt: new Date().toISOString(),
-    ...groupData,
+    displayName: data.displayName,
+    owner,
+    locked: false,
+    prompt: data.prompt,
+    memberCount: 0,
+    teamCount: 0,
+    createdAt: new Date(),
   };
 
   await dynamoDB.put({
@@ -49,7 +39,7 @@ export async function createGroupInfo(groupData: Omit<GroupInfo, "groupId" | "su
   return item;
 }
 
-export async function getGroupInfo(groupId: string) {
+export async function getGroupInfo(groupId: GroupId): Promise<GroupInfoSubtable | null> {
   const result = await dynamoDB.get({
     TableName: TABLE_NAME,
     Key: {
@@ -58,10 +48,13 @@ export async function getGroupInfo(groupId: string) {
     },
   }).promise();
 
-  return result.Item as GroupInfo;
+  return (result.Item as GroupInfoSubtable) || null;
 }
 
-export async function updateGroupInfo(groupId: string, updates: Partial<Omit<GroupInfo, "groupId" | "subTable">>) {
+export async function updateGroupInfo(
+  groupId: GroupId,
+  updates: Partial<Omit<GroupInfoSubtable, "groupId" | "subTable" | "createdAt">>
+) {
   const updateExpressions: string[] = [];
   const expressionAttributeNames: { [key: string]: string } = {};
   const expressionAttributeValues: { [key: string]: any } = {};
@@ -85,12 +78,23 @@ export async function updateGroupInfo(groupId: string, updates: Partial<Omit<Gro
 }
 
 // Group Members CRUD
-export async function addGroupMember(groupId: string, memberData: Omit<GroupMember, "groupId" | "subTable" | "joinedAt">) {
-  const item: GroupMember = {
+export async function getGroupMembers(groupId: GroupId): Promise<GroupMembersSubtable | null> {
+  const result = await dynamoDB.get({
+    TableName: TABLE_NAME,
+    Key: {
+      groupId,
+      subTable: "members",
+    },
+  }).promise();
+
+  return (result.Item as GroupMembersSubtable) || null;
+}
+
+export async function initializeGroupMembers(groupId: GroupId): Promise<GroupMembersSubtable> {
+  const item: GroupMembersSubtable = {
     groupId,
     subTable: "members",
-    joinedAt: new Date().toISOString(),
-    ...memberData,
+    members: {},
   };
 
   await dynamoDB.put({
@@ -101,27 +105,62 @@ export async function addGroupMember(groupId: string, memberData: Omit<GroupMemb
   return item;
 }
 
-export async function getGroupMembers(groupId: string) {
-  const result = await dynamoDB.query({
+export async function addOrUpdateGroupMember(
+  groupId: GroupId,
+  userId: UserId,
+  memberData: Member
+) {
+  await dynamoDB.update({
     TableName: TABLE_NAME,
-    KeyConditionExpression: "groupId = :groupId AND subTable = :subTable",
+    Key: {
+      groupId,
+      subTable: "members",
+    },
+    UpdateExpression: "SET #members.#userId = :memberData",
+    ExpressionAttributeNames: {
+      "#members": "members",
+      "#userId": userId,
+    },
     ExpressionAttributeValues: {
-      ":groupId": groupId,
-      ":subTable": "members",
+      ":memberData": memberData,
+    },
+  }).promise();
+}
+
+export async function removeGroupMember(groupId: GroupId, userId: UserId) {
+  await dynamoDB.update({
+    TableName: TABLE_NAME,
+    Key: {
+      groupId,
+      subTable: "members",
+    },
+    UpdateExpression: "REMOVE #members.#userId",
+    ExpressionAttributeNames: {
+      "#members": "members",
+      "#userId": userId,
+    },
+  }).promise();
+}
+
+// Teams CRUD
+export async function getTeams(groupId: GroupId): Promise<TeamSubtable | null> {
+  const result = await dynamoDB.get({
+    TableName: TABLE_NAME,
+    Key: {
+      groupId,
+      subTable: "teams",
     },
   }).promise();
 
-  return result.Items as GroupMember[];
+  return (result.Item as TeamSubtable) || null;
 }
 
-// Group Teams CRUD
-export async function createTeam(groupId: string, teamData: Omit<GroupTeam, "groupId" | "subTable" | "teamId" | "createdAt">) {
-  const item: GroupTeam = {
+export async function updateTeams(groupId: GroupId, teams: TeamSubtable["teams"]) {
+  const item: TeamSubtable = {
     groupId,
     subTable: "teams",
-    teamId: uuidv4(),
-    createdAt: new Date().toISOString(),
-    ...teamData,
+    generatedAt: new Date(),
+    teams,
   };
 
   await dynamoDB.put({
@@ -132,21 +171,8 @@ export async function createTeam(groupId: string, teamData: Omit<GroupTeam, "gro
   return item;
 }
 
-export async function getGroupTeams(groupId: string) {
-  const result = await dynamoDB.query({
-    TableName: TABLE_NAME,
-    KeyConditionExpression: "groupId = :groupId AND subTable = :subTable",
-    ExpressionAttributeValues: {
-      ":groupId": groupId,
-      ":subTable": "teams",
-    },
-  }).promise();
-
-  return result.Items as GroupTeam[];
-}
-
-// Delete operations
-export async function deleteGroupInfo(groupId: string) {
+// Delete operations (don't expose these, they're just here for completeness and testing)
+export async function deleteGroupInfo(groupId: GroupId) {
   await dynamoDB.delete({
     TableName: TABLE_NAME,
     Key: {
@@ -156,30 +182,22 @@ export async function deleteGroupInfo(groupId: string) {
   }).promise();
 }
 
-export async function deleteGroupMember(groupId: string, userId: string) {
+export async function deleteGroupMembers(groupId: GroupId) {
   await dynamoDB.delete({
     TableName: TABLE_NAME,
     Key: {
       groupId,
       subTable: "members",
     },
-    ConditionExpression: "userId = :userId",
-    ExpressionAttributeValues: {
-      ":userId": userId,
-    },
   }).promise();
 }
 
-export async function deleteTeam(groupId: string, teamId: string) {
+export async function deleteTeams(groupId: GroupId) {
   await dynamoDB.delete({
     TableName: TABLE_NAME,
     Key: {
       groupId,
       subTable: "teams",
-    },
-    ConditionExpression: "teamId = :teamId",
-    ExpressionAttributeValues: {
-      ":teamId": teamId,
     },
   }).promise();
 }
