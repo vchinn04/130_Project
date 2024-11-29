@@ -16,6 +16,7 @@ const getS3Key = (groupId: GroupId, userId: UserId) => {
  * @param userId - The user ID
  * @param promptAnswer - The text content of the prompt answer
  * @returns The S3 URL where the answer is stored
+ * @throws any errors that occur during the operation
  */
 export async function uploadPromptAnswer(
   groupId: GroupId,
@@ -39,6 +40,7 @@ export async function uploadPromptAnswer(
  * @param groupId - The group ID
  * @param userId - The user ID
  * @returns The prompt answer text, or null if not found
+ * @throws any errors that occur during the operation OTHER THAN errors for the object not being found
  */
 export async function getPromptAnswer(
   groupId: GroupId,
@@ -65,6 +67,7 @@ export async function getPromptAnswer(
  * Deletes a prompt answer from S3
  * @param groupId - The group ID
  * @param userId - The user ID
+ * @throws any errors that occur during the operation other than the object not being found
  */
 export async function deletePromptAnswer(
   groupId: GroupId,
@@ -83,6 +86,7 @@ export async function deletePromptAnswer(
  * @param groupId - The group ID
  * @param userId - The user ID
  * @returns boolean indicating if the answer exists
+ * @throws any errors that occur during the operation OTHER THAN errors for the object not being found
  */
 export async function promptAnswerExists(
   groupId: GroupId,
