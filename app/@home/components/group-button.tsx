@@ -6,7 +6,7 @@ import {
   GroupId,
   Team,
   GroupItemMap,
-} from "../../../lib/dynamodb-utils/dynamo-schemas";
+} from "../../../lib/db-utils/schemas";
 import {
   SidebarMenuButton,
   SidebarMenuItem,
