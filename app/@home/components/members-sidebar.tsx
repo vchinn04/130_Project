@@ -2,10 +2,11 @@
 import React from "react";
 import { UserCircle } from "lucide-react";
 import {
-  FullGroupTable,
+  GroupTable,
   GroupId,
   Team,
   TeamSubtable,
+  GroupItemMap,
 } from "../../../lib/dynamodb-utils/dynamo-schemas";
 
 import {
@@ -32,18 +33,20 @@ export default function MembersSidebar({
   groups,
   selectedCollective,
 }: {
-  groups: Record<GroupId, FullGroupTable>;
+  groups: Record<GroupId, GroupItemMap>;
   selectedCollective: string;
 }) {
   let id_split = selectedCollective.split("_");
-  let collective_data: FullGroupTable | Team | undefined = groups[id_split[0]];
+  let collective_data: GroupItemMap | Team | undefined = groups[id_split[0]];
   let member_id_arr: string[] = [];
   if (collective_data !== undefined) {
-    member_id_arr = Object.keys(collective_data.members);
+    member_id_arr = Object.keys(collective_data.members.members);
   }
 
-  if (id_split.length > 1) {
-    collective_data = collective_data.teams[parseInt(id_split[1])];
+  if (collective_data !== undefined && id_split.length > 1) {
+    collective_data = collective_data.teams.teams[
+      parseInt(id_split[1])
+    ] as Team;
     member_id_arr = collective_data.members;
   }
 

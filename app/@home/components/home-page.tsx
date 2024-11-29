@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  FullGroupTable,
+  GroupTable,
   GroupId,
+  Team,
+  GroupItemMap,
 } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import GroupButton from "./group-button";
 import TeamButton from "./team-button";
@@ -26,16 +28,16 @@ import Chat from "./chat";
 export default function CollectiveSidebar({
   groups: initialGroups,
 }: {
-  groups: Record<GroupId, FullGroupTable>;
+  groups: Record<GroupId, GroupItemMap>;
 }) {
   const [groups, setGroups] = useState(initialGroups);
   const [selectedCollective, setSelectedCollective] = useState("");
   const [selectedView, setSelectedView] = useState(View.Groups);
 
-  const handleCreateGroup = (newGroup: FullGroupTable) => {
+  const handleCreateGroup = (newGroup: GroupItemMap) => {
     setGroups((prevGroups) => ({
       ...prevGroups,
-      [newGroup.groupId]: newGroup,
+      [newGroup.info.groupId]: newGroup,
     }));
     // let a = createGroup("Coolio", "Prompt", "PromptAnswer");
     // console.log("SERVER RESPONSE: ", a);
@@ -78,19 +80,21 @@ export default function CollectiveSidebar({
                   );
                 })
               : Object.keys(groups).map((key) => {
-                  return groups[key].teams.map((team, tkey) => {
-                    return (
-                      <TeamButton
-                        key={tkey}
-                        teamId={tkey}
-                        groupId={key}
-                        groupOwner={groups[key].owner}
-                        teamData={team} //{groups[key].teams[tkey]}
-                        selectedCollective={selectedCollective}
-                        setSelectedCollective={setSelectedCollective}
-                      />
-                    );
-                  });
+                  return groups[key].teams.teams.map(
+                    (team: Team, tkey: number) => {
+                      return (
+                        <TeamButton
+                          key={tkey}
+                          teamId={tkey}
+                          groupId={key}
+                          groupOwner={groups[key].info.owner}
+                          teamData={team} //{groups[key].teams[tkey]}
+                          selectedCollective={selectedCollective}
+                          setSelectedCollective={setSelectedCollective}
+                        />
+                      );
+                    }
+                  );
                 })}
           </SidebarMenu>
         </SidebarContent>
