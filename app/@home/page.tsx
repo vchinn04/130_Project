@@ -1,12 +1,12 @@
 import React from "react";
 
-import { GroupTable, GroupId } from "../../lib/dynamodb-utils/dynamo-schemas";
+import { GroupItemMap, GroupId } from "../../lib/dynamodb-utils/dynamo-schemas";
 import CollectiveSidebar from "./components/home-page";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-const groups: Record<GroupId, GroupTable[]> = {
-  groupid1: [
-    {
+const groups: Record<GroupId, GroupItemMap> = {
+  groupid1: {
+    info: {
       groupId: "groupid1",
       owner: "userid1",
       displayName: "CoolGroup",
@@ -17,7 +17,7 @@ const groups: Record<GroupId, GroupTable[]> = {
       teamCount: 1,
       createdAt: new Date(),
     },
-    {
+    members: {
       groupId: "groupid1",
       subTable: "members",
       members: {
@@ -31,7 +31,7 @@ const groups: Record<GroupId, GroupTable[]> = {
         },
       },
     },
-    {
+    teams: {
       groupId: "groupid1",
       subTable: "teams",
       generatedAt: new Date(),
@@ -45,9 +45,9 @@ const groups: Record<GroupId, GroupTable[]> = {
         // },
       ],
     },
-  ],
-  groupid2: [
-    {
+  },
+  groupid2: {
+    info: {
       groupId: "groupid2",
       owner: "userid2",
       displayName: "CoolGroup",
@@ -58,7 +58,7 @@ const groups: Record<GroupId, GroupTable[]> = {
       teamCount: 1,
       createdAt: new Date(),
     },
-    {
+    members: {
       groupId: "groupid1",
       subTable: "members",
       members: {
@@ -72,7 +72,7 @@ const groups: Record<GroupId, GroupTable[]> = {
         },
       },
     },
-    {
+    teams: {
       groupId: "groupid1",
       subTable: "teams",
       generatedAt: new Date(),
@@ -86,7 +86,7 @@ const groups: Record<GroupId, GroupTable[]> = {
         // },
       ],
     },
-  ],
+  },
 };
 export default async function Home() {
   return (

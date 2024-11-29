@@ -5,6 +5,7 @@ import {
   GroupTable,
   GroupId,
   Team,
+  GroupItemMap,
 } from "../../../lib/dynamodb-utils/dynamo-schemas";
 import {
   SidebarMenuButton,
@@ -27,7 +28,7 @@ export default function GroupButton({
   setSelectedCollective,
 }: {
   groupId: GroupId;
-  groupData: GroupTable[];
+  groupData: GroupItemMap;
   selectedCollective: any;
   setSelectedCollective: any;
 }) {
@@ -51,7 +52,7 @@ export default function GroupButton({
                   ? "bg-primary_purple-hover"
                   : "hover:bg-primary_purple-hover"
               } */}
-              {groupData[0].displayName}{" "}
+              {groupData.info.displayName}{" "}
               <ChevronRight className="animate-appear ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
@@ -59,13 +60,13 @@ export default function GroupButton({
           {/*Team Buttons*/}
           <CollapsibleContent>
             <SidebarMenuSub>
-              {groupData[2].teams.map((team: Team, index: number) => {
+              {groupData.teams.teams.map((team: Team, index: number) => {
                 return (
                   <TeamButton
                     key={index}
                     teamId={index}
-                    groupId={groupData[0].groupId}
-                    groupOwner={groupData[0].owner}
+                    groupId={groupData.info.groupId}
+                    groupOwner={groupData.info.owner}
                     teamData={team} //{groupData.teams[key]}
                     selectedCollective={selectedCollective}
                     setSelectedCollective={setSelectedCollective}

@@ -3,6 +3,12 @@ export type UserId = string; // sourced from cognito
 export type GroupId = string; // UUID v4, generated at creation time
 export type TeamId = number;
 
+export type GroupItemMap = {
+  info: GroupInfoSubtable;
+  members: GroupMembersSubtable;
+  teams: TeamSubtable;
+};
+
 export type GroupTable = GroupInfoSubtable | GroupMemberSubtable | TeamSubtable;
 
 // ImmutableGroupInfoProperties &
