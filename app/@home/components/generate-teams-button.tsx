@@ -138,12 +138,12 @@ export default function GenerateTeamsButton({
 }
 
 //with the people that have saved prompts, send those to openai api to be matched
-// add option to mix even if that person hasnt filled out prompt    (Toggle1)
+// add option to mix even if that person hasn't filled out prompt    (Toggle1)
 
 //depending on setting: (include locked teams) (Toggle2)
 // no matter who are locked,they are either mixed in or not depending on selected setting
 
-//people who are locked into a team dont have their team erased, every other team in the group gets deleted
+//people who are locked into a team don't have their team erased, every other team in the group gets deleted
 
 //get back data from openai api call (with dummy data rn)
 
