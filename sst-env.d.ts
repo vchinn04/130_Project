@@ -22,5 +22,9 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "PromptAnswersBucket": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
   }
 }

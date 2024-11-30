@@ -1,8 +1,21 @@
+"use client";
+
 import React from "react";
 
-import { GroupItemMap, GroupId } from "../../lib/dynamodb-utils/dynamo-schemas";
+import { GroupItemMap, GroupId } from "../../lib/db-utils/schemas";
 import CollectiveSidebar from "./components/home-page";
 import { SidebarProvider } from "@/components/ui/sidebar";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const groups: Record<GroupId, GroupItemMap> = {
   groupid1: {
@@ -90,15 +103,18 @@ const groups: Record<GroupId, GroupItemMap> = {
 };
 export default async function Home() {
   return (
-    <div className="flex h-screen bg-gray-200">
-      <SidebarProvider>
-        {/* Left Sidebar - Channel List */}
-        {/* <div className="w-64 bg-gray-900 text-gray-100 flex flex-col"> */}
-        <CollectiveSidebar groups={groups} />
-        {/* </div> */}
-        {/* Hi Victor */}
-        {/* Main Content */}
-      </SidebarProvider>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="flex h-screen bg-gray-200">
+        <SidebarProvider>
+          {/* Left Sidebar - Channel List */}
+          {/* <div className="w-64 bg-gray-900 text-gray-100 flex flex-col"> */}
+          <CollectiveSidebar groups={groups} />
+          {/* </div> */}
+          {/* Hi Victor */}
+          {/* Main Content */}
+        </SidebarProvider>
+      </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

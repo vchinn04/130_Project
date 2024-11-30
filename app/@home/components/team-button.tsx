@@ -5,7 +5,7 @@ import {
   GroupId,
   Team,
   TeamId,
-} from "../../../lib/dynamodb-utils/dynamo-schemas";
+} from "../../../lib/db-utils/schemas";
 import { LockOpen, Lock } from "lucide-react";
 
 import {

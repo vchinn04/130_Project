@@ -43,6 +43,10 @@ export default $config({
       },
     });
 
+    const promptAnswersBucket = new sst.aws.Bucket("PromptAnswersBucket", {
+      public: true, // dubious
+    });
+
     // const usersTable = new sst.aws.Dynamo("UsersTable", {
     //   fields: {
     //     userId: "string", // UUID
@@ -111,6 +115,7 @@ export default $config({
       link: [
         // usersTable,
         groupsTable,
+        promptAnswersBucket,
         // teamsTable,
         // messagesTable
       ],

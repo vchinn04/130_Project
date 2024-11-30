@@ -11,7 +11,7 @@ import {
   ImmutableGroupInfoProperties,
   ImmutableTeamSubtableProperties,
   Team,
-} from "./dynamo-schemas";
+} from "./schemas";
 
 const dynamoDB = new DynamoDB.DocumentClient();
 const TABLE_NAME = Resource.GroupsTable.name; // Bind the table name to the resource defined in sst.config.ts
@@ -245,6 +245,36 @@ export async function updateTeamsTable(
     UpdateExpression: `SET ${updateExpressions.join(", ")}`,
     ExpressionAttributeNames: expressionAttributeNames,
     ExpressionAttributeValues: expressionAttributeValues,
+  }).promise();
+}
+
+/**
+ * Updates the prompt answer for a specific member in the members array
+ * @param groupId - The ID of the group to update the members for.
+ * @param userId - The ID of the user to update the prompt answer for.
+ * @param s3Url - The S3 URL where the prompt answer is stored.
+ * @throws any errors that occur during the database operation.
+ */
+export async function updateMemberPromptAnswer(
+  groupId: GroupId,
+  userId: UserId,
+  s3Url: string
+) {
+  await dynamoDB.update({
+    TableName: TABLE_NAME,
+    Key: {
+      groupId,
+      subTable: "members",
+    },
+    UpdateExpression: "SET #members.#userId.#promptAnswer = :url",
+    ExpressionAttributeNames: {
+      "#members": "members",
+      "#userId": userId,
+      "#promptAnswer": "promptAnswer"
+    },
+    ExpressionAttributeValues: {
+      ":url": s3Url
+    },
   }).promise();
 }
 
