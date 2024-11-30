@@ -1,3 +1,5 @@
+"use server";
+
 import { S3 } from 'aws-sdk';
 import { Resource } from 'sst';
 import { GroupId, UserId } from '@/lib/db-utils/schemas';

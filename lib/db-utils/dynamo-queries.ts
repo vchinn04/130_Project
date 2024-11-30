@@ -1,3 +1,5 @@
+"use server";
+
 import { DynamoDB } from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { Resource } from "sst";
