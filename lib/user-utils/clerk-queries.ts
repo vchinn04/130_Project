@@ -1,4 +1,4 @@
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { UserId, GroupId } from "@/types/globals";
 
 /**
@@ -39,9 +39,9 @@ export const clerkGetAllGroups = async (): Promise<GroupId[]> => {
  * @throws errors if the request headers do not have a valid session or connection to the clerk API fails
  */
 export const clerkAddJoinedGroup = async (groupId: GroupId) => {
-  const { sessionClaims } = await auth();
+  const authRes = await auth();
   const client = await clerkClient();
-  const res = await client.users.updateUserMetadata(sessionClaims?.userId as UserId, {
+  const res = await client.users.updateUserMetadata(authRes?.userId as UserId, {
     publicMetadata: {
       joinedGroups: [...(await clerkGetJoinedGroups()), groupId],
       ownedGroups: await clerkGetOwnedGroups()
@@ -57,9 +57,9 @@ export const clerkAddJoinedGroup = async (groupId: GroupId) => {
  * @throws errors if the request headers do not have a valid session or connection to the clerk API fails
  */
 export const clerkAddOwnedGroup = async (groupId: GroupId) => {
-  const { sessionClaims } = await auth();
+  const authRes = await auth();
   const client = await clerkClient();
-  const res = await client.users.updateUserMetadata(sessionClaims?.userId as UserId, {
+  const res = await client.users.updateUserMetadata(authRes?.userId as UserId, {
     publicMetadata: {
       joinedGroups: await clerkGetJoinedGroups(),
       ownedGroups: [...(await clerkGetOwnedGroups()), groupId]
@@ -75,9 +75,9 @@ export const clerkAddOwnedGroup = async (groupId: GroupId) => {
  * @throws errors if the request headers do not have a valid session or connection to the clerk API fails
  */
 export const clerkLeaveGroup = async (groupId: GroupId) => {
-  const { sessionClaims } = await auth();
+  const authRes = await auth();
   const client = await clerkClient();
-  const res = await client.users.updateUserMetadata(sessionClaims?.userId as UserId, {
+  const res = await client.users.updateUserMetadata(authRes?.userId as UserId, {
     publicMetadata: {
       joinedGroups: (await clerkGetJoinedGroups()).filter((id) => id !== groupId),
       ownedGroups: await clerkGetOwnedGroups()
@@ -93,9 +93,9 @@ export const clerkLeaveGroup = async (groupId: GroupId) => {
  * @throws errors if the request headers do not have a valid session or connection to the clerk API fails
  */
 export const clerkRemoveOwnedGroup = async (groupId: GroupId) => {
-  const { sessionClaims } = await auth();
+  const authRes = await auth();
   const client = await clerkClient();
-  const res = await client.users.updateUserMetadata(sessionClaims?.userId as UserId, {
+  const res = await client.users.updateUserMetadata(authRes?.userId as UserId, {
     publicMetadata: {
       joinedGroups: await clerkGetJoinedGroups(),
       ownedGroups: (await clerkGetOwnedGroups()).filter((id) => id !== groupId)
