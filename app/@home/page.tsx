@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-
-import { GroupItemMap, GroupId } from "../../lib/db-utils/schemas";
+import { GroupId } from "@/types/globals";
+import { GroupItemMap } from "@/lib/db-utils/schemas";
 import CollectiveSidebar from "./components/home-page";
 import { SidebarProvider } from "@/components/ui/sidebar";
 

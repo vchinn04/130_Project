@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { UserCircle } from "lucide-react";
+import { GroupId } from "@/types/globals";
 import {
   GroupTable,
-  GroupId,
   Team,
   TeamSubtable,
   GroupItemMap,
-} from "../../../lib/db-utils/schemas";
+} from "@/lib/db-utils/schemas";
 
 import {
   Sidebar,

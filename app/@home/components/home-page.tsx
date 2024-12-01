@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { GroupId } from "@/types/globals";
 import {
   GroupTable,
-  GroupId,
   Team,
   GroupItemMap,
-} from "../../../lib/db-utils/schemas";
+} from "@/lib/db-utils/schemas";
 import GroupButton from "./group-button";
 import TeamButton from "./team-button";
 import {
