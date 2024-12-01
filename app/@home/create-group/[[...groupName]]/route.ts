@@ -1,48 +1,40 @@
 import { clerkAddOwnedGroup } from "@/lib/user-utils/clerk-queries";
-import { addOrUpdateGroupMember, createGroupInfo, deleteGroupInfo, deleteGroupMembers, initializeGroupMembers } from "@/lib/db-utils/dynamo-queries";
+import { initializeGroup } from "@/lib/db-utils/dynamo-queries";
 import { auth } from "@clerk/nextjs/server";
 import { UserId } from "@/types/globals";
-import { GroupInfoSubtable, GroupMembersSubtable } from "@/lib/db-utils/schemas";
-import { NextApiRequest, NextApiResponse } from "next";
 
-export async function POST(req: Request, { params }: { params: Promise<{ groupName: string[] }> }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ groupName: string[] }> }
+): Promise<Response> {
   // get the auth session token of the requester
   const { sessionClaims } = await auth();
   const groupName = (await params).groupName;
 
   // Instantiate the new Group in the database
-  let newGroup: GroupInfoSubtable | undefined = undefined;
+  let info, members, teams;
   try {
-    newGroup = await createGroupInfo(sessionClaims?.userId as UserId, groupName[0]);
+    ({ info, members, teams } = await initializeGroup(sessionClaims?.userId as UserId, groupName[0]));
 
-    // if an error is thrown in adding the user to the group, return an error response (should be made more detailed)
+    // if an error is thrown in creating the group, return an error response (should be made more detailed)
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Failed to initialize new group - group not created" }, { status: 500 });
-  }
-
-  // initialize the members list for the group in the database
-  let newMembersRecord: GroupMembersSubtable | undefined = undefined;
-  try {
-    newMembersRecord = await initializeGroupMembers(newGroup?.groupId, sessionClaims?.userId as UserId);
-
-    // if this operation fails, roll-back the group creation and return an error response
-  } catch (error) {
-    console.error(error);
-    await deleteGroupInfo(newGroup?.groupId);
-    return Response.json({ error: "Failed to initialize group members - group not created" }, { status: 500 });
+    return Response.json({ error: "Failed to initialize new group in DB - group not created" }, { status: 500 });
   }
 
   // add the group to the user's owned groups in clerk
   try {
-    await clerkAddOwnedGroup(newGroup?.groupId);
-    return Response.json({ group: newGroup, members: newMembersRecord }, { status: 200 });
+    await clerkAddOwnedGroup(info.groupId);
+    return Response.json({ info, members, teams }, { status: 200 });
 
-    // if this operation fails, roll-back the group creation and return an error response
+    // if an error is thrown in adding the group to the user's owned groups in clerk, return an error response
+    // we won't roll back the group creation, as that would just add more traffic to the server while it's already likely busy.
+    // the orphaned group will be deleted by the cleanup lambda eventually.
   } catch (error) {
     console.error(error);
-    await deleteGroupInfo(newGroup?.groupId);
-    await deleteGroupMembers(newGroup?.groupId);
-    return Response.json({ error: "Failed to add group to clerk - group not created" }, { status: 500 });
+    return Response.json(
+      { error: `Failed to add groupID to user's owned groups in clerk - group not created: ${error}` },
+      { status: 500 }
+    );
   }
 }
