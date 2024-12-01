@@ -1,11 +1,10 @@
 "use server";
 
+import { UserId, GroupId } from "@/types/globals";
 import { DynamoDB } from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { Resource } from "sst";
 import {
-  GroupId,
-  UserId,
   GroupInfoSubtable,
   GroupMembersSubtable,
   TeamSubtable,
@@ -265,7 +264,7 @@ export async function updateMemberPromptAnswer(
   await dynamoDB.update({
     TableName: TABLE_NAME,
     Key: {
-      groupId,
+      groupId: groupId,
       subTable: "members",
     },
     UpdateExpression: "SET #members.#userId.#promptAnswer = :url",
