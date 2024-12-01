@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+
 import Link from "next/link";
 import {
   GroupTable,
@@ -111,6 +112,7 @@ export default function CollectiveSidebar({
       <Chat
         selectedCollective={selectedCollective}
         setSelectedCollective={setSelectedCollective}
+        groups={groups}
       />
       <Main
         selectedCollective={selectedCollective}

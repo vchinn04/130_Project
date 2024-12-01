@@ -50,6 +50,7 @@ const groups: Record<GroupId, GroupItemMap> = {
       generatedAt: new Date(),
       teams: [
         {
+          teamUniqueId: "teamid2",
           members: ["member1"],
         },
         // groupid1_teamid1: {
@@ -91,6 +92,7 @@ const groups: Record<GroupId, GroupItemMap> = {
       generatedAt: new Date(),
       teams: [
         {
+          teamUniqueId: "teamid1",
           members: ["userid1"],
         },
         // groupid1_teamid1: {
