@@ -125,11 +125,16 @@ export async function getGroupMembers(groupId: GroupId): Promise<GroupMembersSub
   @returns the GroupMembersSubtable entry that was initialized in the database.
   @throws any errors that occur during the database operation.
 */
-export async function initializeGroupMembers(groupId: GroupId): Promise<GroupMembersSubtable> {
+export async function initializeGroupMembers(groupId: GroupId, owner: UserId): Promise<GroupMembersSubtable> {
   const item: GroupMembersSubtable = {
     groupId: groupId,
     subTable: "members",
-    members: {},
+    members: {
+      [owner]: {
+        ready: false,
+        promptAnswer: "",
+      },
+    },
   };
 
   await dynamoDB.put({
