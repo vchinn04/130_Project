@@ -13,6 +13,7 @@ export type GroupTable = GroupInfoSubtable | GroupMemberSubtable | TeamSubtable;
 // ------------------------------------------------------------------------------------------------
 
 export type Team = {
+  teamUniqueId: TeamUniqueId; // unique identifier for the team
   members: UserId[]; // simple list of the members in the team
 };
 
