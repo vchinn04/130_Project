@@ -11,11 +11,7 @@ import {
     PlusCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import PopUp from '../@home/components/PopUp';
-import { useState } from 'react';
-import { Button } from "@/components/ui/button"
 export default function TeamPanel() {
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
     return (
         <div className="flex h-screen bg-gray-800">
             {/* Left Sidebar - Channel List */}
@@ -73,8 +69,6 @@ export default function TeamPanel() {
                 <div className="flex flex-1">
                     <div className="flex-1 bg-gray-700">
                         {/* Chat content would go here */}
-                        <Button onClick={() => setIsPopupOpen(!isPopupOpen)}>Toggle Popup</Button>
-                        {isPopupOpen && <PopUp setIsPopupOpen={setIsPopupOpen} />}
                         </div>
                         <div className="w-60 bg-gray-800 p-4">
                             <div className="text-gray-400 text-sm mb-4">MEMBERS - 5</div>
