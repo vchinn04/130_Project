@@ -5,16 +5,19 @@ import { getGroupMembers } from "@/lib/db-utils/dynamo-queries";
 import { UserId } from "@/types/globals";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(
+export async function GET(
   req: Request,
   { params }: { params: Promise<{ groupId: string, numClusters: number }> }
 ) {
+  let k: number = 0;
   try {
     // get the auth session token of the requester
     // const { responses, numClusters, contextPrompt } = await req.json();
-    const contextPrompt = "This is a test context prompt. groups the users based on whatever seems like it would make the strongest teams.";
+    const contextPrompt = "This is a class setting. Users are trying to form teams to work on a class project for the quarter, and need to be matched into teams that will work well together and have similar goals and interests.";
     const authRes = await auth();
-    const { groupId, numClusters } = await params;
+    let { groupId, numClusters } = await params;
+
+    k = numClusters;
 
     // get the members table from the database
     const membersSubtable = await getGroupMembers(groupId);
@@ -25,18 +28,22 @@ export async function POST(
     // go through the record of members in the subtable and, if the user is ready, get their prompt from the bucket and add it to a new map of userIds to prompts
     const members = membersSubtable.members;
     const responses: Record<UserId, string> = {};
-    for (const member of members) {
-      if (member.ready) {
-        const prompt = await getPromptAnswer(groupId, member.userId);
-        if (prompt) {
-          responses[member.userId] = prompt;
-        }
-      }
-    }
+    await Promise.all(
+      Object.entries(members)
+        .filter(([userId, member]) => member.ready)
+        .map(async ([userId, member]) => {
+          const prompt = await getPromptAnswer(groupId, userId);
+          if (prompt) {
+            responses[userId] = prompt;
+          }
+        })
+    );
 
+    // log all of the prompts
+    console.log(responses);
     // these should be gotten from the database but this is a placeholder for now
     if (!responses || !numClusters || !contextPrompt) {
-      return Response.json({ error: "Responses, numClusters, and contextPrompt are required." }, { status: 400 });
+      return Response.json({ error: "something went wrong - responses could not be assembled." }, { status: 400 });
     }
     // get all of the prompts from the buckets of the active users for the team
 
@@ -74,12 +81,9 @@ export async function POST(
 
 
     // return the teams to the client.
-
-
-
     return Response.json({ teams: teams }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return Response.json({ error: `Failed to generate teams: ${error}` }, { status: 500 });
+    return Response.json({ error: `Failed to generate teams: ${error} k: ${k}` }, { status: 500 });
   }
 }

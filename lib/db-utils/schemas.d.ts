@@ -1,6 +1,7 @@
 import { UserId, GroupId } from "@types/globals";
 
 export type TeamId = number;
+export type TeamUniqueId = string;
 
 export type GroupItemMap = {
   info: GroupInfoSubtable;
