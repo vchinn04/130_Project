@@ -18,7 +18,7 @@ const Main = ({
         <LeaveGroup selectedCollective={selectedCollective} />
         <GenerateTeamsButton selectedCollective={selectedCollective} />
         <CreateGroupButton onCreateGroup={handleCreateGroup} />
-        <JoinGroupButton />
+        <JoinGroupButton onCreateGroup={handleCreateGroup}/>
         <PromptAnswerButton />
       </div>
     </main>

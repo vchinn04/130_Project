@@ -78,37 +78,37 @@ export default function CreateGroupButton({
     const newGroupId = `group-${Date.now()}`;
     setGroupId(newGroupId);
 
-    const newGroup = isSignedIn&&{
-      info: {
-        groupId: groupId,
-        subTable: "info",
-        createdAt: new Date(),
-        displayName: groupName,
-        owner: user.id,
-        locked: false,
-        prompt: prompt,
-        memberCount: 10,
-        teamCount: 2
-      },
-      members: {
-        groupId: groupId,
-        subTable: "members",
-        members: {
-          [user.id]: {
-            ready: false,
-            promptAnswer: "Example answer"
-          }
-        }
-      },
-      teams: {
-        groupId: groupId,
-        subTable: "teams",
-        generatedAt: new Date(),
-        teams: []
-      }
-    };
+    // const newGroup = isSignedIn&&{
+    //   info: {
+    //     groupId: groupId,
+    //     subTable: "info",
+    //     createdAt: new Date(),
+    //     displayName: groupName,
+    //     owner: user.id,
+    //     locked: false,
+    //     prompt: prompt,
+    //     memberCount: 10,
+    //     teamCount: 2
+    //   },
+    //   members: {
+    //     groupId: groupId,
+    //     subTable: "members",
+    //     members: {
+    //       [user.id]: {
+    //         ready: false,
+    //         promptAnswer: "Example answer"
+    //       }
+    //     }
+    //   },
+    //   teams: {
+    //     groupId: groupId,
+    //     subTable: "teams",
+    //     generatedAt: new Date(),
+    //     teams: []
+    //   }
+    // };
     
-    onCreateGroup(newGroup);
+    // onCreateGroup(newGroup);
 
     alert(`Group created with ID: ${newGroupId}`);
   };
