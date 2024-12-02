@@ -8,13 +8,13 @@ export async function GET(
   { params }: { params: Promise<{ groupName: string[] }> }
 ): Promise<Response> {
   // get the auth session token of the requester
-  const { sessionClaims } = await auth();
+  const authRes = await auth();
   const groupName = (await params).groupName;
 
   // Instantiate the new Group in the database
   let info, members, teams;
   try {
-    ({ info, members, teams } = await initializeGroup(sessionClaims?.userId as UserId, groupName[0]));
+    ({ info, members, teams } = await initializeGroup(authRes?.userId as UserId, groupName[0]));
 
     // if an error is thrown in creating the group, return an error response (should be made more detailed)
   } catch (error) {
