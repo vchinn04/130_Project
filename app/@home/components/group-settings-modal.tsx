@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   Settings,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,13 +33,15 @@ import { Switch } from "@/components/ui/switch";
 import { GroupId } from "@/types/globals";
 import { useQuery } from "@tanstack/react-query";
 import { GroupItemMap } from "@/lib/db-utils/schemas";
-
+import { UserProfile } from "@/app/@home/use-user";
 
 export function GroupSettingsModal( ) {
   const [open, setOpen] = React.useState(false); // default state of the dialog is closed (false)
   const [unsavedChanges, setUnsavedChanges] = React.useState(false); // replace with a state hooked-up to the query logic
   const [prompt, setPrompt] = React.useState(""); // replace with a state hooked-up to the query logic
 
+  const res = UserProfile();
+  console.log(res)
   //still a place holder
   const groupId = "6ff7b718-2289-4ea7-b236-7c3566d76844"; // replace with the react query "use query when you hook-up the backend"
 
