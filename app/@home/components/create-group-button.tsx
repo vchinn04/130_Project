@@ -17,30 +17,55 @@ export default function CreateGroupButton({
 }: {
   onCreateGroup: any;
 }) {
-  const [formData, setFormData] = useState({
-    groupName: "",
-    groupDescription: "",
-    prompt: "",
-    ownerAnswer: "",
-  });
+  const [groupName, setGroupName] = useState("");
+  const [groupDescription, setGroupDescription] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [customPrompt, setCustomPrompt] = useState(false);
+  const [promptText, setPromptText] = useState("");
   const [error, setError] = useState("");
   const [groupId, setGroupId] = useState("");
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+  const handlePromptOptionChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.value === "custom") {
+      setCustomPrompt(true);
+      setPrompt(promptText);
+    } else {
+      setCustomPrompt(false);
+      setPrompt(e.target.innerText);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePromptChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPrompt(e.target.value);
+    setPromptText(e.target.value);
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { groupName, groupDescription, prompt } = formData;
 
     if (!groupName || !groupDescription || !prompt) {
       setError("All fields except prompt answer are required.");
       return;
+    }
+
+    try {
+      const response = await fetch(`create-group/${groupName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          groupName,
+          groupDescription,
+          prompt,
+        }),
+        //parse response
+      });
+    } catch (error) {
+      console.error("Error with response from server:", error);
     }
 
     // Generate a unique group ID -> placeholder for now
@@ -49,10 +74,9 @@ export default function CreateGroupButton({
 
     const newGroup = {
       groupId: newGroupId,
-      groupName: formData.groupName,
-      groupDescription: formData.groupDescription,
-      prompt: formData.prompt,
-      ownerAnswer: formData.ownerAnswer,
+      groupName,
+      groupDescription,
+      prompt,
       teams: {},
     };
 
@@ -87,8 +111,8 @@ export default function CreateGroupButton({
               id="groupName"
               name="groupName"
               placeholder="Group Name"
-              value={formData.groupName}
-              onChange={handleChange}
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
               required
               className="mt-1 block w-full"
             />
@@ -104,47 +128,49 @@ export default function CreateGroupButton({
               id="groupDescription"
               name="groupDescription"
               placeholder="Group Description"
-              value={formData.groupDescription}
-              onChange={handleChange}
+              value={groupDescription}
+              onChange={(e) => setGroupDescription(e.target.value)}
               required
               className="mt-1 block w-full p-2 border rounded-md"
             />
           </div>
           <div>
             <label
-              htmlFor="prompt"
+              htmlFor="promptOption"
               className="block text-sm font-medium text-gray-700"
             >
-              Prompt
+              Enter a prompt or select a preset:
             </label>
             <select
-              id="prompt"
-              name="prompt"
-              value={formData.prompt}
-              onChange={handleChange}
+              id="promptOption"
+              name="promptOption"
+              onChange={handlePromptOptionChange}
               required
               className="mt-1 block w-full p-2 border rounded-md"
             >
-              <option value="">Select a prompt</option>
-              <option value="prompt1">Prompt 1</option>
-              <option value="prompt2">Prompt 2</option>
+              <option value="prompt1">What is your fav animal</option>
+              <option value="prompt2">What is your fav color</option>
+              <option value="custom">Custom</option>
             </select>
           </div>
           <div>
-            <label
-              htmlFor="ownerAnswer"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Prompt Answer
-            </label>
-            <Input
-              id="ownerAnswer"
-              name="ownerAnswer"
-              placeholder="Prompt Answer"
-              value={formData.ownerAnswer}
-              onChange={handleChange}
-              className="mt-1 block w-full"
-            />
+            {customPrompt && (
+              <>
+                <label
+                  htmlFor="promptValue"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Group Prompt
+                </label>
+                <Input
+                  id="promptValue"
+                  name="promptValue"
+                  placeholder="Your Custom Prompt"
+                  value={prompt}
+                  onChange={handlePromptChange}
+                />
+              </>
+            )}
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <Button type="submit" className="w-full">
