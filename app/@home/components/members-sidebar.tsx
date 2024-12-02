@@ -97,7 +97,7 @@ export default function MembersSidebar({
                   ? userIdMap[id][0] !== undefined
                     ? userIdMap[id][0]
                     : id
-                  : id;
+                  : "";
 
               let src: string | undefined =
                 userIdMap[id] !== undefined
@@ -113,7 +113,7 @@ export default function MembersSidebar({
                 >
                   {/* text-gray-200*/}
                   {src !== undefined ? (
-                    <Avatar>
+                    <Avatar className="animate-appear">
                       <AvatarImage src={src} />
                       <AvatarFallback>
                         {" "}
@@ -121,9 +121,9 @@ export default function MembersSidebar({
                       </AvatarFallback>
                     </Avatar>
                   ) : (
-                    <UserCircle className="mr-2" />
+                    <></>
                   )}
-                  <span>{username}</span>
+                  <span className="ml-2">{username}</span>
                 </div>
               );
             })}
