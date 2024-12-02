@@ -11,19 +11,29 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
+import { useUser } from '@clerk/nextjs';
+
 
 export default function CreateGroupButton({
   onCreateGroup,
 }: {
   onCreateGroup: any;
 }) {
+  const defaultPrompts = {
+   animal:"What is your fav animal",
+    color:"What is your fav color"
+
+}
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(defaultPrompts.animal);
   const [customPrompt, setCustomPrompt] = useState(false);
   const [promptText, setPromptText] = useState("");
   const [error, setError] = useState("");
   const [groupId, setGroupId] = useState("");
+  const { isSignedIn, user, isLoaded } = useUser()
+
 
   const handlePromptOptionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -43,6 +53,7 @@ export default function CreateGroupButton({
     setPrompt(e.target.value);
     setPromptText(e.target.value);
   };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -72,14 +83,36 @@ export default function CreateGroupButton({
     const newGroupId = `group-${Date.now()}`;
     setGroupId(newGroupId);
 
-    const newGroup = {
-      groupId: newGroupId,
-      groupName,
-      groupDescription,
-      prompt,
-      teams: {},
+    const newGroup = isSignedIn&&{
+      info: {
+        groupId: groupId,
+        subTable: "info",
+        createdAt: new Date(),
+        displayName: groupName,
+        owner: user.id,
+        locked: false,
+        prompt: prompt,
+        memberCount: 10,
+        teamCount: 2
+      },
+      members: {
+        groupId: groupId,
+        subTable: "members",
+        members: {
+          [user.id]: {
+            ready: false,
+            promptAnswer: "Example answer"
+          }
+        }
+      },
+      teams: {
+        groupId: groupId,
+        subTable: "teams",
+        generatedAt: new Date(),
+        teams: []
+      }
     };
-
+    
     onCreateGroup(newGroup);
 
     alert(`Group created with ID: ${newGroupId}`);
@@ -148,8 +181,11 @@ export default function CreateGroupButton({
               required
               className="mt-1 block w-full p-2 border rounded-md"
             >
-              <option value="prompt1">What is your fav animal</option>
-              <option value="prompt2">What is your fav color</option>
+              {Object.entries(defaultPrompts).map(([key, value]) => (
+                <option key={key}>
+                  {value}
+                </option>
+              ))}
               <option value="custom">Custom</option>
             </select>
           </div>
