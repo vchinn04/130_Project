@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { GroupId } from "@/types/globals";
 import { GroupTable, Team, GroupItemMap } from "@/lib/db-utils/schemas";
@@ -31,7 +31,6 @@ export default function CollectiveSidebar() {
   const metaData = user.publicMetadata;
   const groupIds = [...metaData.joinedGroups, ...metaData.ownedGroups];
 
-  const [allGroupsFetched, setAllGroupsFetched] = useState(false);
   const [groups, setGroups] = useState<Record<GroupId, GroupItemMap>>({});
   const [selectedCollective, setSelectedCollective] = useState("");
   const [selectedView, setSelectedView] = useState(View.Groups);
@@ -56,21 +55,18 @@ export default function CollectiveSidebar() {
     })),
   });
 
-  useEffect(() => {
-    const allFetched = groupQueries.every((query) => query.isSuccess);
-    setAllGroupsFetched(allFetched);
-
-    if (allFetched) {
-      const fetchedGroups = groupIds.reduce((acc, id, index) => {
-        const query = groupQueries[index];
-        if (query?.data) {
-          return { ...acc, [id]: query.data };
-        }
-        return acc;
-      }, {});
-       setGroups(fetchedGroups); //heyyyyy we need help if you could hop back on call pls
+  // Incrementally update groups as queries complete
+  groupQueries.forEach((query, index) => {
+    if (query.isSuccess && groupIds[index]) {
+      const groupId = groupIds[index];
+      if (!groups[groupId]) {
+        setGroups((prevGroups) => ({
+          ...prevGroups,
+          [groupId]: query.data,
+        }));
+      }
     }
-  }, [groupQueries, groupIds]);
+  });
 
   const handleCreateGroup = (newGroup: GroupItemMap) => {
     setGroups((prevGroups) => ({
@@ -79,12 +75,9 @@ export default function CollectiveSidebar() {
     }));
   };
 
-
   return (
     <>
       <Sidebar className="w-64 bg-gray-900">
-        {" "}
-        {/*text-gray-100*/}
         <SidebarHeader>
           <div className="p-4 border-b border-gray-700 flex justify-between items-center primary-foreground">
             <div className="flex items-center">
@@ -93,46 +86,34 @@ export default function CollectiveSidebar() {
                 Match.io
               </Link>
             </div>
-
-            <div className="ml-2">
-              {" "}
-              {}
-              {/* <CreateGroupButton onCreateGroup={handleCreateGroup} /> {} */}
-            </div>
           </div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            {/* Channels Section */}
-            {allGroupsFetched && selectedView == View.Groups
-              ? Object.keys(groups).map((key) => {
-                  return (
-                    <GroupButton
-                      key={key}
+            {/* Display groups incrementally */}
+            {selectedView === View.Groups
+              ? Object.keys(groups).map((key) => (
+                  <GroupButton
+                    key={key}
+                    groupId={key}
+                    groupData={groups[key]}
+                    selectedCollective={selectedCollective}
+                    setSelectedCollective={setSelectedCollective}
+                  />
+                ))
+              : Object.keys(groups).flatMap((key) =>
+                  groups[key].teams.teams.map((team: Team, tkey: number) => (
+                    <TeamButton
+                      key={tkey}
+                      teamId={tkey}
                       groupId={key}
-                      groupData={groups[key]}
+                      groupOwner={groups[key].info.owner}
+                      teamData={team}
                       selectedCollective={selectedCollective}
                       setSelectedCollective={setSelectedCollective}
                     />
-                  );
-                })
-              : allGroupsFetched && Object.keys(groups).map((key) => {
-                  return groups[key].teams.teams.map(
-                    (team: Team, tkey: number) => {
-                      return (
-                        <TeamButton
-                          key={tkey}
-                          teamId={tkey}
-                          groupId={key}
-                          groupOwner={groups[key].info.owner}
-                          teamData={team} //{groups[key].teams[tkey]}
-                          selectedCollective={selectedCollective}
-                          setSelectedCollective={setSelectedCollective}
-                        />
-                      );
-                    }
-                  );
-                })}
+                  ))
+                )}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
@@ -152,7 +133,7 @@ export default function CollectiveSidebar() {
       <Main
         selectedCollective={selectedCollective}
         handleCreateGroup={handleCreateGroup}
-      />{" "}
+      />
       <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>
   );
