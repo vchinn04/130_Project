@@ -9,5 +9,7 @@ export const UserProfile = () => {
 
     if (!user) return <div>Loading...</div>
 
-    return (JSON.stringify(user.publicMetadata));
+    // return (JSON.stringify(user.publicMetadata));
+    const { ownedGroups = [], joinedGroups = [] } = user.publicMetadata;
+    return { ownedGroups, joinedGroups }
 };
