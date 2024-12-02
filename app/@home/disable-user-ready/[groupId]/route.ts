@@ -2,7 +2,7 @@ import { addOrUpdateGroupMember } from "@/lib/db-utils/dynamo-queries";
 import { UserId } from "@/types/globals";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(
+export async function GET(
   req: Request,
   { params }: { params: Promise<{ groupId: string }> }
 ) {
