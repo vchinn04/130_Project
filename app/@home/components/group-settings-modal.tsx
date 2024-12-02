@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+// import React from "react";
 import {
   Settings,
   User,
@@ -35,18 +35,19 @@ import { useQuery } from "@tanstack/react-query";
 import { GroupItemMap } from "@/lib/db-utils/schemas";
 import { UserProfile } from "@/app/@home/use-user";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import React, { useEffect, useState } from "react";
 
-export function GroupSettingsModal() {
+export function GroupSettingsModal({ groupId, }: { groupId: GroupId; }) {
   const [open, setOpen] = React.useState(false); // default state of the dialog is closed (false)
   const [unsavedChanges, setUnsavedChanges] = React.useState(false); // replace with a state hooked-up to the query logic
   const [prompt, setPrompt] = React.useState(""); // replace with a state hooked-up to the query logic
   const [isOwner, setIsOwner] = React.useState(false);
-  // const [allowJoinById, setAllowJoinById] = React.useState(false);
+  const [allowJoinById, setAllowJoinById] = React.useState(false);
 
-  const res = UserProfile() as { ownedGroups: string[]; joinedGroups: string[]; };
+  const res = UserProfile() as { ownedGroups: string[]; joinedGroups: string[]};
   // console.log(res.ownedGroups);
   //still a place holder
-  const groupId: string = "958a7ce4-ef60-47e8-afcf-6bf9d112facb"; // replace with the react query "use query when you hook-up the backend"
+  // const groupId: string = "958a7ce4-ef60-47e8-afcf-6bf9d112facb"; // replace with the react query "use query when you hook-up the backend"
 
   React.useEffect(() => {
     const isUserOwner = res?.ownedGroups?.includes(groupId);
@@ -69,11 +70,11 @@ export function GroupSettingsModal() {
   React.useEffect(() => {
     if (data) {
       setPrompt(data.prompt);
-      // setAllowJoinById(data.allowJoinById);
+      setAllowJoinById(data.allowJoinById);
     }
   }, [data]);
-  
-  if (isLoading) return <div>Loading group info...</div>;
+
+  if (isLoading) return <SidebarMenuAction><div className="flex justify-center items-center h-full"><div className="animate-spin rounded-full h-4 w-4 border-t-4 border-blue-500"></div></div></SidebarMenuAction>;
   if (isError) return <div>Error: {(error as Error).message}</div>;
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -83,13 +84,23 @@ export function GroupSettingsModal() {
 
   const handleSave = () => {
     // Implement save logic here
-    setUnsavedChanges(false);
-  };
+    const updatedFields = {
+      prompt: prompt,
+      locked: allowJoinById,
+    };
 
-  return (
-    <>
-      {isOwner ? (
-        <Dialog open={open} onOpenChange={setOpen}>
+    fetch(`update-group-info/${groupId}`, {
+      method: 'POST',
+      body: JSON.stringify(updatedFields),
+    })
+  }
+
+  // console.log(isOwner, res?.ownedGroups?.includes(groupId), res.ownedGroups)
+
+return (
+  <>
+    {isOwner ? (
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           {/* <Button size="sm">Group Settings</Button> */}
           <SidebarMenuAction>
@@ -107,9 +118,9 @@ export function GroupSettingsModal() {
               className="hidden md:flex gap-4 border-r border-gray-700"
             >
               <SidebarHeader className="flex font-bold text-lg"
-              style={{
-                paddingTop: "20px", // Space from the top
-              }}>
+                style={{
+                  paddingTop: "20px", // Space from the top
+                }}>
                 Group Name: {data.displayName}
               </SidebarHeader>
               {/* <SidebarHeader>Group ID: {groupId}</SidebarHeader> */}
@@ -122,7 +133,7 @@ export function GroupSettingsModal() {
                       </SidebarMenuItem>
                       <SidebarMenuItem>
                         Allow people to join by group ID
-                        <Switch />
+                        <Switch checked={allowJoinById} onCheckedChange={setAllowJoinById}/>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
                         Members: {data.memberCount}
@@ -160,7 +171,7 @@ export function GroupSettingsModal() {
                     </Button>
                   </DialogClose>
                   <DialogClose asChild>
-                    <Button variant="default" className="justify-end">
+                    <Button variant="default" className="justify-end" onClick={handleSave}>
                       Save
                     </Button>
                   </DialogClose>
@@ -170,9 +181,9 @@ export function GroupSettingsModal() {
           </SidebarProvider>
         </DialogContent>
       </Dialog>
-      ) : (
-        <></>
-      )} 
-    </>
-  );
-}
+    ) : (
+      <></>
+    )}
+  </>
+);
+};
