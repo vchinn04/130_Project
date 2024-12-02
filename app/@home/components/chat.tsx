@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { useUser } from "@clerk/nextjs";
-import { GroupId, Team, GroupItemMap } from "../../../lib/db-utils/schemas";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { Team, GroupItemMap } from "../../../lib/db-utils/schemas";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import {
   ChatBubble,
@@ -22,7 +22,7 @@ import {
 } from "@radix-ui/react-tooltip";
 
 import getClerkUserList from "../../../lib/chat-utils";
-import { db } from "../../../lib/firebase";
+import { auth, db } from "../../../lib/firebase";
 
 import {
   doc,
@@ -38,6 +38,8 @@ import {
   onSnapshot,
   limit,
 } from "firebase/firestore";
+import { signInWithCustomToken } from "firebase/auth";
+import { GroupId } from "@/types/globals";
 
 // Type of message entry in DB
 type MessageEntry = {
@@ -64,6 +66,17 @@ export default function Chat({
   }
 
   const [msg, setMsg] = useState("");
+
+  const { getToken, userId } = useAuth();
+  const signIntoFirebaseWithClerk = async () => {
+    const token = await getToken({ template: "integration_firebase" });
+    const userCredentials = await signInWithCustomToken(auth, token || "");
+    // The userCredentials.user object can call the methods of
+    // the Firebase platform as an authenticated user.
+    console.log("User:", userCredentials.user);
+    // getFirestoreData();
+  };
+  signIntoFirebaseWithClerk();
 
   // Extract whether selected collective is team or group
   let id_split = selectedCollective.split("_");
@@ -240,6 +253,7 @@ export default function Chat({
                   <ChatBubble
                     key={val.id}
                     variant={val.senderId == user.id ? "sent" : "received"}
+                    className="animate-appear"
                   >
                     <Tooltip>
                       <TooltipTrigger>
