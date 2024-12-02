@@ -1,12 +1,9 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { GroupId } from "@/types/globals";
-import {
-  GroupTable,
-  Team,
-  GroupItemMap,
-} from "@/lib/db-utils/schemas";
+import { GroupTable, Team, GroupItemMap } from "@/lib/db-utils/schemas";
 import GroupButton from "./group-button";
 import TeamButton from "./team-button";
 import {
@@ -19,29 +16,69 @@ import {
 import { View } from "./view-button";
 import ViewButton from "./view-button";
 import MembersSidebar from "./members-sidebar";
-import { UserButton } from "@clerk/nextjs";
-import CreateGroupButton from "./create-group-button"; // Import the CreateGroupButton component
+import CreateGroupButton from "./create-group-button";
 import Main from "./Main";
 import Chat from "./chat";
+import { useUser, UserButton } from "@clerk/nextjs";
+import { useQueries } from "@tanstack/react-query";
 
-// import { createGroup } from "@/lib/data";
-export default function CollectiveSidebar({
-  groups: initialGroups,
-}: {
-  groups: Record<GroupId, GroupItemMap>;
-}) {
-  const [groups, setGroups] = useState(initialGroups);
+export default function CollectiveSidebar() {
+  const { isSignedIn, user, isLoaded } = useUser();
+
+  if (!isLoaded) return null;
+  if (!isSignedIn || !user) return null;
+
+  const metaData = user.publicMetadata;
+  const groupIds = [...metaData.joinedGroups, ...metaData.ownedGroups];
+
+  const [allGroupsFetched, setAllGroupsFetched] = useState(false);
+  const [groups, setGroups] = useState<Record<GroupId, GroupItemMap>>({});
   const [selectedCollective, setSelectedCollective] = useState("");
   const [selectedView, setSelectedView] = useState(View.Groups);
+
+  // Fetch all group data using useQueries
+  const groupQueries = useQueries({
+    queries: groupIds.map((id) => ({
+      queryKey: ["groups", id],
+      enabled: !!id,
+      queryFn: async () => {
+        const response = await fetch(`get-group/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      },
+    })),
+  });
+
+  useEffect(() => {
+    const allFetched = groupQueries.every((query) => query.isSuccess);
+    setAllGroupsFetched(allFetched);
+
+    if (allFetched) {
+      const fetchedGroups = groupIds.reduce((acc, id, index) => {
+        const query = groupQueries[index];
+        if (query?.data) {
+          return { ...acc, [id]: query.data };
+        }
+        return acc;
+      }, {});
+       setGroups(fetchedGroups); //heyyyyy we need help if you could hop back on call pls
+    }
+  }, [groupQueries, groupIds]);
 
   const handleCreateGroup = (newGroup: GroupItemMap) => {
     setGroups((prevGroups) => ({
       ...prevGroups,
       [newGroup.info.groupId]: newGroup,
     }));
-    // let a = createGroup("Coolio", "Prompt", "PromptAnswer");
-    // console.log("SERVER RESPONSE: ", a);
   };
+
 
   return (
     <>
@@ -67,7 +104,7 @@ export default function CollectiveSidebar({
         <SidebarContent>
           <SidebarMenu>
             {/* Channels Section */}
-            {selectedView == View.Groups
+            {allGroupsFetched && selectedView == View.Groups
               ? Object.keys(groups).map((key) => {
                   return (
                     <GroupButton
@@ -79,7 +116,7 @@ export default function CollectiveSidebar({
                     />
                   );
                 })
-              : Object.keys(groups).map((key) => {
+              : allGroupsFetched && Object.keys(groups).map((key) => {
                   return groups[key].teams.teams.map(
                     (team: Team, tkey: number) => {
                       return (
