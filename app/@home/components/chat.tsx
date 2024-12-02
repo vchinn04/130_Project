@@ -1,8 +1,36 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { Timestamp } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+
+import { useUser } from "@clerk/nextjs";
+import { GroupId, Team, GroupItemMap } from "../../../lib/db-utils/schemas";
+import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
+import {
+  ChatBubble,
+  ChatBubbleAction,
+  ChatBubbleActionWrapper,
+  ChatBubbleAvatar,
+  ChatBubbleMessage,
+  ChatBubbleTimestamp,
+} from "@/components/ui/chat/chat-bubble";
+import { ChatInput } from "@/components/ui/chat/chat-input";
+import { Button } from "@/components/ui/button";
+import { Send, Trash2, X } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
+
+import getClerkUserList from "../../../lib/chat-utils";
+import { db } from "../../../lib/firebase";
 
 import {
+  doc,
+  addDoc,
+  serverTimestamp,
+  deleteDoc,
+  getDocs,
+  Timestamp,
   query,
   collection,
   where,
@@ -10,46 +38,9 @@ import {
   onSnapshot,
   limit,
 } from "firebase/firestore";
-import { useAuth, useUser } from "@clerk/nextjs";
-import {
-  GroupTable,
-  GroupId,
-  Team,
-  TeamSubtable,
-  GroupItemMap,
-} from "../../../lib/db-utils/schemas";
-import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
-import {
-  ChatBubble,
-  ChatBubbleAvatar,
-  ChatBubbleMessage,
-  ChatBubbleTimestamp,
-} from "@/components/ui/chat/chat-bubble";
-import { ChatInput } from "@/components/ui/chat/chat-input";
-import { Button } from "@/components/ui/button";
-import { Send, X } from "lucide-react";
-import { auth, db } from "../../../lib/firebase";
 
-import { signInWithCustomToken } from "firebase/auth";
-
-import { doc, getDoc } from "firebase/firestore";
-import { addDoc, serverTimestamp } from "firebase/firestore";
-import { useQuery } from "@tanstack/react-query";
-
-// Remove this if you do not have Firestore set up
-// for your Firebase app
-const getFirestoreData = async () => {
-  const docRef = doc(db, "messages", "CE85vjSVzuhXx6oXkwbB");
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    console.log("Document data:", docSnap.data());
-  } else {
-    // docSnap.data() will be undefined in this case
-    console.log("No such document!");
-  }
-};
-
-export type MessageEntry = {
+// Type of message entry in DB
+type MessageEntry = {
   collectionId: string;
   messageContent: string;
   senderId: string;
@@ -69,104 +60,52 @@ export default function Chat({
   const { isSignedIn, user, isLoaded } = useUser();
 
   if (!isLoaded || !isSignedIn) {
-    return null;
+    return <></>;
   }
 
   const [msg, setMsg] = useState("");
 
-  const { getToken, userId } = useAuth();
-  const signIntoFirebaseWithClerk = async () => {
-    const token = await getToken({ template: "integration_firebase" });
-
-    const userCredentials = await signInWithCustomToken(auth, token || "");
-    // The userCredentials.user object can call the methods of
-    // the Firebase platform as an authenticated user.
-    console.log("User:", userCredentials.user);
-    // getFirestoreData();
-  };
-
-  signIntoFirebaseWithClerk();
-
+  // Extract whether selected collective is team or group
   let id_split = selectedCollective.split("_");
   let UID = id_split[0];
   let collective_data: GroupItemMap | Team | undefined = groups[id_split[0]];
+  let collective_name: string = "";
+  if (collective_data !== undefined) {
+    collective_name = collective_data.info.displayName;
+  }
   if (collective_data !== undefined && id_split.length > 1) {
     collective_data = collective_data.teams.teams[
       parseInt(id_split[1])
     ] as Team;
-    UID += "_" + collective_data.teamUniqueId;
+    collective_name += " Team #" + (parseInt(id_split[1]) + 1);
+    UID += "_" + collective_data.teamUniqueId; // Create the team joint UID
   }
 
-  console.log(selectedCollective);
-  // var messages: Record<string, MessageEntry> = {};
-  // if (selectedCollective != "") {
-  //   messages = {
-  //     messageid1: {
-  //       message: "Hello!",
-  //       sender: "userid1",
-  //       timestamp: new Date(),
-  //     },
-  //     messageid2: {
-  //       message: "Hi!",
-  //       sender: "userid2",
-  //       timestamp: new Date(),
-  //     },
-  //     messageid3: {
-  //       message: "How are u?",
-  //       sender: "userid3",
-  //       timestamp: new Date(),
-  //     },
-  //   };
-  // }
   const [messages, setMessages] = useState([] as MessageEntry[]);
+  const [queryLimit, setQueryLimit] = useState(10); // How many messages to fetch
 
-  console.log("UID: ", UID);
-  // const result = useQuery({
-  //   queryKey: ["messages"],
-  //   queryFn: () => {
-  //     const q = query(
-  //       collection(db, "messages"),
-  //       where("collectionId", "==", UID),
-  //       orderBy("timestamp", "desc"),
-  //       limit(50)
-  //     );
+  const [userIdMap, setUserIdMap] = useState(
+    {} as Record<string, (string | undefined)[]>
+  );
 
-  //     const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-  //       const fetchedMessages: MessageEntry[] = [];
-  //       QuerySnapshot.forEach((doc) => {
-  //         let data = doc.data();
-  //         fetchedMessages.push({
-  //           collectionId: data.collectionId,
-  //           messageContent: data.messageContent,
-  //           senderId: data.senderId,
-  //           timestamp: data.timestamp,
-  //           id: doc.id,
-  //         });
-  //       });
-  //       const sortedMessages = fetchedMessages.sort(
-  //         (a, b) => a.timestamp.toMillis() - b.timestamp.toMillis()
-  //       );
-  //       setMessages(sortedMessages);
-  //     });
-  //     return () => unsubscribe;
-  //   },
-  // });
-
-  // if (UID != "") {
+  // Fetch messages and update when change occurs
   useEffect(() => {
     const q = query(
       collection(db, "messages"),
       where("collectionId", "==", UID),
       orderBy("timestamp", "desc"),
-      limit(50)
+      limit(queryLimit)
     );
-    console.log("QUERY!!");
 
-    const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-      const fetchedMessages: MessageEntry[] = [];
-      QuerySnapshot.forEach((doc) => {
+    const unsubscribe = onSnapshot(q, (qSnap) => {
+      const newMessages: MessageEntry[] = [];
+      const userIdList: Record<string, boolean> = {};
+
+      qSnap.forEach((doc) => {
         let data = doc.data();
-        fetchedMessages.push({
+        userIdList["+" + data.senderId] = true; // Store senderId, dict helps to deduplicate
+
+        newMessages.push({
           collectionId: data.collectionId,
           messageContent: data.messageContent,
           senderId: data.senderId,
@@ -175,10 +114,16 @@ export default function Chat({
         });
       });
 
-      const sortedMessages = fetchedMessages.sort(
-        (a, b) => a.timestamp.toMillis() - b.timestamp.toMillis()
+      const sortedMessages = newMessages.sort(
+        // Sort messages based on time sent
+        (ta, tb) =>
+          (ta.timestamp != null ? ta.timestamp.toMillis() : Date.now()) -
+          (tb.timestamp != null ? tb.timestamp.toMillis() : Date.now())
       );
-      console.log("CHANGE!");
+
+      getClerkUserList(Object.keys(userIdList)).then((value) => {
+        setUserIdMap(value); // Find the users of messages
+      });
 
       setMessages(sortedMessages);
 
@@ -186,20 +131,25 @@ export default function Chat({
     });
 
     return unsubscribe;
+  }, [selectedCollective, queryLimit]); // Listen to selectedCollective and queryLimit changes
+
+  // Reset queryLimit to 10 whenever selectedCollective changes
+  useEffect(() => {
+    setQueryLimit(10);
   }, [selectedCollective]);
-  // }
+
   function closeFunc() {
     setSelectedCollective("");
   }
 
   function onChange(e: any) {
-    setMsg(e.target.value);
+    setMsg(e.target.value); // Current typed message
   }
 
+  // Add message to DB
   const sendMessage = async (event: any) => {
     event.preventDefault();
     if (msg.trim() === "") {
-      alert("Enter valid message");
       return;
     }
 
@@ -213,6 +163,24 @@ export default function Chat({
     setMsg("");
   };
 
+  // Delete message from DB
+  const deleteMessage = async (event: any, id: string) => {
+    event.preventDefault();
+    let doc_query = query(
+      // Find matching record
+      collection(db, "messages"),
+      where("senderId", "==", user.id),
+      where("__name__", "==", id), // This is a way to compare document id
+      where("collectionId", "==", UID)
+    );
+
+    const deletionSnapshot = await getDocs(doc_query);
+    deletionSnapshot.forEach(async (docSnapshot) => {
+      await deleteDoc(doc(db, "messages", docSnapshot.id));
+    });
+  };
+
+  // Detect 'Enter' press
   function onKeyPress(e: any) {
     if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
@@ -220,7 +188,11 @@ export default function Chat({
     }
   }
 
-  // console.log("MESSAGES: ", messages);
+  // 'Load More' button handler
+  function onLimitIncrease() {
+    setQueryLimit(queryLimit + 10);
+  }
+
   return (
     <>
       {selectedCollective == "" ? (
@@ -228,7 +200,7 @@ export default function Chat({
       ) : (
         <div className="animate-appear flex flex-col grow justify-center rounded-md mx-7 mt-7 mb-[3.5rem] p-0 bg-white shadow-md">
           <div className="flex justify-between items-center px-1 border-b border-gray-400">
-            <h2 className="text-lg pl-1">Chat Name</h2>
+            <h2 className="text-lg pl-1">{collective_name}</h2>
             <Button
               variant={"ghost"}
               size="icon"
@@ -241,17 +213,64 @@ export default function Chat({
 
           <div className="grow overflow-y-auto">
             <ChatMessageList>
+              {messages.length >= 10 ? (
+                <Button variant={"link"} onClick={onLimitIncrease}>
+                  Load More
+                </Button>
+              ) : (
+                <></>
+              )}
+
               {messages.map((val: MessageEntry) => {
+                let username: string | undefined =
+                  userIdMap[val.senderId] !== undefined
+                    ? userIdMap[val.senderId][0] !== undefined
+                      ? userIdMap[val.senderId][0]
+                      : val.senderId[0]
+                    : val.senderId[0];
+
+                let src: string | undefined =
+                  userIdMap[val.senderId] !== undefined
+                    ? userIdMap[val.senderId][1] !== undefined
+                      ? userIdMap[val.senderId][1]
+                      : undefined
+                    : undefined;
+
                 return (
                   <ChatBubble
                     key={val.id}
                     variant={val.senderId == user.id ? "sent" : "received"}
                   >
-                    <ChatBubbleAvatar fallback={val.senderId} />
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <ChatBubbleAvatar src={src} fallback={username} />
+                      </TooltipTrigger>
+                      <TooltipContent>{username}</TooltipContent>
+                    </Tooltip>
+
                     <ChatBubbleMessage>{val.messageContent}</ChatBubbleMessage>
-                    <ChatBubbleTimestamp
-                      timestamp={val.timestamp.toDate().toLocaleString()}
-                    />
+
+                    {val.timestamp != null ? (
+                      <ChatBubbleTimestamp
+                        timestamp={val.timestamp.toDate().toLocaleString()}
+                      />
+                    ) : (
+                      <></>
+                    )}
+
+                    {val.senderId == user.id ? (
+                      <ChatBubbleActionWrapper>
+                        <ChatBubbleAction
+                          className="size-7"
+                          icon={<Trash2 />}
+                          onClick={(event) => {
+                            deleteMessage(event, val.id);
+                          }}
+                        />
+                      </ChatBubbleActionWrapper>
+                    ) : (
+                      <></>
+                    )}
                   </ChatBubble>
                 );
               })}
@@ -265,6 +284,7 @@ export default function Chat({
               className="max-w-[575px] min-h-5  rounded-full bg-background resize-none  px-4"
               onChange={onChange}
               onKeyDown={onKeyPress}
+              value={msg}
             ></ChatInput>
             <Button
               variant={"ghost"}
