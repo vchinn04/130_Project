@@ -30,7 +30,7 @@ export default function CollectiveSidebar() {
   if (!isSignedIn || !user) return null;
 
   const metaData = user.publicMetadata;
-  const groupIds = [...metaData.joinedGroups, ...metaData.ownedGroups];
+  const groupIds = [...(metaData.joinedGroups as GroupId[]), ...(metaData.ownedGroups as GroupId[])];
 
   const [groups, setGroups] = useState<Record<GroupId, GroupItemMap>>({});
   const [selectedCollective, setSelectedCollective] = useState("");

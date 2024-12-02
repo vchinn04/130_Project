@@ -111,7 +111,7 @@ export default async function Home() {
         <SidebarProvider>
           {/* Left Sidebar - Channel List */}
           {/* <div className="w-64 bg-gray-900 text-gray-100 flex flex-col"> */}
-          <CollectiveSidebar groups={groups} />
+          <CollectiveSidebar />
           {/* </div> */}
           {/* Hi Victor */}
           {/* Main Content */}
