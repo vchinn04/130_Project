@@ -23,12 +23,12 @@ export async function GET(
   //TODO: check if the group is locked
 
   // otherwise, try to add the user to the group in the database
-  const { sessionClaims } = await auth();
+  const authRes = await auth();
   try {
     try {
-      await addOrUpdateGroupMember(groupId, sessionClaims?.userId as UserId, {
+      await addOrUpdateGroupMember(groupId, authRes?.userId as UserId, {
         ready: false,
-      promptAnswer: "",
+        promptAnswer: "",
       });
     } catch (error) {
       console.error(error);
