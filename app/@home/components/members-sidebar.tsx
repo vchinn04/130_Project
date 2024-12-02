@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
 import { GroupId } from "@/types/globals";
 import {
@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/sidebar";
 import { GroupSettingsModal } from "./group-settings-modal";
 import GenerateTeamsButton from "./generate-teams-button";
+import getClerkUserList from "@/lib/chat-utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 /*************  ✨ Codeium Command ⭐  *************/
 /**
@@ -50,6 +52,22 @@ export default function MembersSidebar({
     member_id_arr = collective_data.members;
   }
 
+  const [userIdMap, setUserIdMap] = useState(
+    {} as Record<string, (string | undefined)[]>
+  );
+
+  useEffect(() => {
+    const userIdList: Record<string, boolean> = {};
+
+    member_id_arr.forEach((id) => {
+      userIdList["+" + id] = true; // Store id, dict helps to deduplicate
+    });
+
+    getClerkUserList(Object.keys(userIdList)).then((value) => {
+      setUserIdMap(value); // Find the users of messages
+    });
+  }, [selectedCollective]);
+
   return (
     <Sidebar side="right" className="w-64 bg-gray-300">
       {" "}
@@ -74,14 +92,38 @@ export default function MembersSidebar({
         <SidebarGroup>
           <SidebarGroupContent>
             {member_id_arr.map((id) => {
+              let username: string | undefined =
+                userIdMap[id] !== undefined
+                  ? userIdMap[id][0] !== undefined
+                    ? userIdMap[id][0]
+                    : id
+                  : id;
+
+              let src: string | undefined =
+                userIdMap[id] !== undefined
+                  ? userIdMap[id][1] !== undefined
+                    ? userIdMap[id][1]
+                    : undefined
+                  : undefined;
+
               return (
                 <div
                   key={id}
                   className="animate-appear flex p-4 justify-items-start	items-center py-2 primary-foreground"
                 >
                   {/* text-gray-200*/}
-                  <UserCircle className="mr-2" />
-                  <span>{id}</span>
+                  {src !== undefined ? (
+                    <Avatar>
+                      <AvatarImage src={src} />
+                      <AvatarFallback>
+                        {" "}
+                        <UserCircle className="mr-2" />
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <UserCircle className="mr-2" />
+                  )}
+                  <span>{username}</span>
                 </div>
               );
             })}
