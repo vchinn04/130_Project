@@ -1,11 +1,7 @@
 "use client";
 import React, { useState } from "react";
-
-import {
-  GroupId,
-  Team,
-  TeamId,
-} from "../../../lib/db-utils/schemas";
+import { GroupId } from "@/types/globals";
+import { Team, TeamId } from "@/lib/db-utils/schemas";
 import { LockOpen, Lock } from "lucide-react";
 
 import {

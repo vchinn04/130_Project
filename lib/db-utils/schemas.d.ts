@@ -1,6 +1,5 @@
-export type UserId = string; // sourced from cognito
+import { UserId, GroupId } from "@types/globals";
 
-export type GroupId = string; // UUID v4, generated at creation time
 export type TeamId = number;
 export type TeamUniqueId = string;
 
@@ -12,14 +11,10 @@ export type GroupItemMap = {
 
 export type GroupTable = GroupInfoSubtable | GroupMemberSubtable | TeamSubtable;
 
-// ImmutableGroupInfoProperties &
-//   ImmutableGroupMembersProperties &
-//   ImmutableTeamSubtableProperties;
-
 // ------------------------------------------------------------------------------------------------
 
 export type Team = {
-  teamUniqueId: TeamUniqueId;
+  teamUniqueId: TeamUniqueId; // unique identifier for the team
   members: UserId[]; // simple list of the members in the team
 };
 

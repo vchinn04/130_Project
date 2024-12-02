@@ -1,7 +1,8 @@
 "use server";
+
+import { UserId, GroupId } from "@/types/globals";
 import { S3 } from "aws-sdk";
 import { Resource } from "sst";
-import { GroupId, UserId } from "@/lib/db-utils/schemas";
 
 const s3 = new S3();
 const BUCKET_NAME = Resource.PromptAnswersBucket.name;

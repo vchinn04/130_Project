@@ -1,10 +1,10 @@
 "use server";
+
+import { UserId, GroupId } from "@/types/globals";
 import { DynamoDB } from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { Resource } from "sst";
 import {
-  GroupId,
-  UserId,
   GroupInfoSubtable,
   GroupMembersSubtable,
   TeamSubtable,
@@ -12,27 +12,30 @@ import {
   ImmutableGroupInfoProperties,
   ImmutableTeamSubtableProperties,
   Team,
+  GroupItemMap,
 } from "./schemas";
 
 const dynamoDB = new DynamoDB.DocumentClient();
 const TABLE_NAME = Resource.GroupsTable.name; // Bind the table name to the resource defined in sst.config.ts
 
 /**
-  Creates a new group info entry and adds it to the database.
-  @param owner - The user ID of the group owner.
-  @param data - The data for the group info entry.
-  @returns the Group info entry object that was added to the database.
-  @throws any errors that occur during the database operation.
-*/
-export async function createGroupInfo(
+ * Creates a new group with all required subtables in a single transaction.
+ * @param owner - The user ID of the group owner.
+ * @param displayName - Optional display name for the group.
+ * @returns Object containing all created subtables.
+ * @throws any errors that occur during the database operation.
+ */
+export async function initializeGroup(
   owner: UserId,
   displayName?: string
-): Promise<GroupInfoSubtable> {
-  const item: GroupInfoSubtable = {
-    groupId: uuidv4(),
+): Promise<GroupItemMap> {
+  const groupId = uuidv4();
+
+  const groupInfo: GroupInfoSubtable = {
+    groupId,
     subTable: "info",
     displayName: displayName ?? "",
-    owner: owner,
+    owner,
     locked: false,
     prompt: "",
     memberCount: 1,
@@ -40,14 +43,92 @@ export async function createGroupInfo(
     createdAt: new Date(),
   };
 
+  const membersTable: GroupMembersSubtable = {
+    groupId,
+    subTable: "members",
+    members: {
+      [owner]: {
+        ready: false,
+        promptAnswer: "",
+      },
+    },
+  };
+
+  const teamsTable: TeamSubtable = {
+    groupId,
+    subTable: "teams",
+    generatedAt: new Date(),
+    teams: [],
+  };
+
   await dynamoDB
-    .put({
-      TableName: TABLE_NAME,
-      Item: item,
+    .transactWrite({
+      TransactItems: [
+        {
+          Put: {
+            TableName: TABLE_NAME,
+            Item: groupInfo,
+          },
+        },
+        {
+          Put: {
+            TableName: TABLE_NAME,
+            Item: membersTable,
+          },
+        },
+        {
+          Put: {
+            TableName: TABLE_NAME,
+            Item: teamsTable,
+          },
+        },
+      ],
     })
     .promise();
 
-  return item;
+  return {
+    info: groupInfo,
+    members: membersTable,
+    teams: teamsTable,
+  };
+}
+
+/**
+ * Retrieves a group from the database using a batch get to fetch all subtables.
+ * @param groupId - The ID of the group to retrieve.
+ * @returns the GroupItemMap entry that was retrieved from the database, or null if it does not exist.
+ * @throws any errors that occur during the database operation.
+ */
+export async function getGroup(groupId: GroupId): Promise<GroupItemMap | null> {
+  const result = await dynamoDB
+    .batchGet({
+      RequestItems: {
+        [TABLE_NAME]: {
+          Keys: [
+            { groupId, subTable: "info" },
+            { groupId, subTable: "members" },
+            { groupId, subTable: "teams" },
+          ],
+        },
+      },
+    })
+    .promise();
+
+  const items = result.Responses?.[TABLE_NAME];
+  if (!items || items.length !== 3) return null;
+
+  // Find each subtable in the results
+  const info = items.find(
+    (item) => item.subTable === "info"
+  ) as GroupInfoSubtable;
+  const members = items.find(
+    (item) => item.subTable === "members"
+  ) as GroupMembersSubtable;
+  const teams = items.find((item) => item.subTable === "teams") as TeamSubtable;
+
+  if (!info || !members || !teams) return null;
+
+  return { info, members, teams };
 }
 
 /**
@@ -131,31 +212,6 @@ export async function getGroupMembers(
     .promise();
 
   return (result.Item as GroupMembersSubtable) || null;
-}
-
-/**
-  Initializes a new GroupMembersSubtable entry for a given group in the database.
-  @param groupId - The ID of the group to initialize the members for.
-  @returns the GroupMembersSubtable entry that was initialized in the database.
-  @throws any errors that occur during the database operation.
-*/
-export async function initializeGroupMembers(
-  groupId: GroupId
-): Promise<GroupMembersSubtable> {
-  const item: GroupMembersSubtable = {
-    groupId: groupId,
-    subTable: "members",
-    members: {},
-  };
-
-  await dynamoDB
-    .put({
-      TableName: TABLE_NAME,
-      Item: item,
-    })
-    .promise();
-
-  return item;
 }
 
 /**
@@ -293,7 +349,7 @@ export async function updateMemberPromptAnswer(
     .update({
       TableName: TABLE_NAME,
       Key: {
-        groupId,
+        groupId: groupId,
         subTable: "members",
       },
       UpdateExpression: "SET #members.#userId.#promptAnswer = :url",
@@ -390,6 +446,8 @@ export async function removeTeam(groupId: GroupId, teamIndex: number) {
     })
     .promise();
 }
+
+// ------------------------------ don't use these ------------------------------
 
 /**
  * Deletes a GroupInfoSubtable entry from the database.
