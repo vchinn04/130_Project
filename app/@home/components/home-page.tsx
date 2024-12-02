@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import Link from "next/link";
 import { GroupId } from "@/types/globals";
 import { GroupTable, Team, GroupItemMap } from "@/lib/db-utils/schemas";
@@ -29,7 +30,7 @@ export default function CollectiveSidebar() {
   if (!isSignedIn || !user) return null;
 
   const metaData = user.publicMetadata;
-  const groupIds = [...metaData.joinedGroups, ...metaData.ownedGroups];
+  const groupIds = [...(metaData.joinedGroups as GroupId[]), ...(metaData.ownedGroups as GroupId[])];
 
   const [groups, setGroups] = useState<Record<GroupId, GroupItemMap>>({});
   const [selectedCollective, setSelectedCollective] = useState("");
@@ -129,6 +130,7 @@ export default function CollectiveSidebar() {
       <Chat
         selectedCollective={selectedCollective}
         setSelectedCollective={setSelectedCollective}
+        groups={groups}
       />
       <Main
         selectedCollective={selectedCollective}

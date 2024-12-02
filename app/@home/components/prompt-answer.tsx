@@ -29,7 +29,7 @@ const PromptAnswerButton = ({
 			try {
 				const response = await fetch( `join-group/${promptAnswer}`, 
 				{
-					method: "POST",
+					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
 					},
@@ -41,6 +41,7 @@ const PromptAnswerButton = ({
 			console.error("Error submitting form:", error);
 		}
 	};
+};
 
 	return (
         <Dialog>
@@ -73,7 +74,6 @@ const PromptAnswerButton = ({
           </DialogContent>
         </Dialog>
       );
-    };
 }
 
 export default PromptAnswerButton;

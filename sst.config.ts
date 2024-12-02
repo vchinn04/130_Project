@@ -106,6 +106,7 @@ export default $config({
 
     const NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = new sst.Secret("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
     const CLERK_SECRET_KEY = new sst.Secret("CLERK_SECRET_KEY");
+    const OPENAI_API_KEY = new sst.Secret("OPENAI_API_KEY");
 
     // Init the NextJS app resource cluster
     // Originally set up with these values (check the sst source for the actual current values):
@@ -122,6 +123,7 @@ export default $config({
       environment: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
         CLERK_SECRET_KEY: CLERK_SECRET_KEY.value,
+        OPENAI_API_KEY: OPENAI_API_KEY.value,
       },
       path: ".",
     });

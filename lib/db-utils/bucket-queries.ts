@@ -1,8 +1,8 @@
 "use server";
 
 import { UserId, GroupId } from "@/types/globals";
-import { S3 } from 'aws-sdk';
-import { Resource } from 'sst';
+import { S3 } from "aws-sdk";
+import { Resource } from "sst";
 
 const s3 = new S3();
 const BUCKET_NAME = Resource.PromptAnswersBucket.name;
@@ -27,12 +27,14 @@ export async function uploadPromptAnswer(
 ): Promise<string> {
   const key = getS3Key(groupId, userId);
 
-  await s3.putObject({
-    Bucket: BUCKET_NAME,
-    Key: key,
-    Body: promptAnswer,
-    ContentType: 'text/plain',
-  }).promise();
+  await s3
+    .putObject({
+      Bucket: BUCKET_NAME,
+      Key: key,
+      Body: promptAnswer,
+      ContentType: "text/plain",
+    })
+    .promise();
 
   return `s3://${BUCKET_NAME}/${key}`;
 }
@@ -51,14 +53,16 @@ export async function getPromptAnswer(
   try {
     const key = getS3Key(groupId, userId);
 
-    const result = await s3.getObject({
-      Bucket: BUCKET_NAME,
-      Key: key,
-    }).promise();
+    const result = await s3
+      .getObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+      })
+      .promise();
 
     return result.Body?.toString() || null;
   } catch (error) {
-    if ((error as Error).name === 'NoSuchKey') {
+    if ((error as Error).name === "NoSuchKey") {
       return null;
     }
     throw error;
@@ -77,10 +81,12 @@ export async function deletePromptAnswer(
 ): Promise<void> {
   const key = getS3Key(groupId, userId);
 
-  await s3.deleteObject({
-    Bucket: BUCKET_NAME,
-    Key: key,
-  }).promise();
+  await s3
+    .deleteObject({
+      Bucket: BUCKET_NAME,
+      Key: key,
+    })
+    .promise();
 }
 
 /**
@@ -97,17 +103,18 @@ export async function promptAnswerExists(
   try {
     const key = getS3Key(groupId, userId);
 
-    await s3.headObject({
-      Bucket: BUCKET_NAME,
-      Key: key,
-    }).promise();
+    await s3
+      .headObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+      })
+      .promise();
 
     return true;
   } catch (error) {
-    if ((error as Error).name === 'NotFound') {
+    if ((error as Error).name === "NotFound") {
       return false;
     }
     throw error;
   }
 }
-
