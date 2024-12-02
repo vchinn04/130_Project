@@ -9,9 +9,34 @@ import {Dialog,
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
+
 const PromptAnswerButton = ({
+  selectedCollective,
 }: {
+  selectedCollective: any;
 }) => {
+  // const { isSignedIn, user, isLoaded } = useUser();
+
+  // if (!isLoaded) return null;
+  // if (!isSignedIn || !user) return null;
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ["groups", selectedCollective],
+      enabled: !!selectedCollective,
+      queryFn: async () => {
+        const response = await fetch(`get-group/${selectedCollective}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      },
+  })
 
 	const promptAnswerRef = useRef<HTMLInputElement>(null);
 
@@ -52,7 +77,7 @@ const PromptAnswerButton = ({
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold">Answer the prompt:</DialogTitle>
               <DialogDescription className="text-sm text-gray-500">
-                Answer the prompt to join the group.
+                {(isPending||isError)?"Answer the prompt to join the group.":data.info.prompt}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
