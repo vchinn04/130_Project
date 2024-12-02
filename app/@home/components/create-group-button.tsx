@@ -67,12 +67,7 @@ export default function CreateGroupButton({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          groupName,
-          groupDescription,
-          prompt,
-        }),
+        }
         //parse response
       });
     } catch (error) {
