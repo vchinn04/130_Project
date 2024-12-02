@@ -75,7 +75,7 @@ export default function GroupButton({
               })}
             </SidebarMenuSub>
           </CollapsibleContent>
-          <GroupSettingsModal />
+          <GroupSettingsModal groupData={groupData} />
         </SidebarMenuItem>
       </Collapsible>
     </>
