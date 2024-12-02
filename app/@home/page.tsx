@@ -9,6 +9,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { useUser } from '@clerk/nextjs';
+import { useQuery } from "@tanstack/react-query";
+
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -103,14 +107,18 @@ const groups: Record<GroupId, GroupItemMap> = {
     },
   },
 };
+
 export default async function Home() {
+
+ 
+  
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex h-screen bg-gray-200">
         <SidebarProvider>
           {/* Left Sidebar - Channel List */}
           {/* <div className="w-64 bg-gray-900 text-gray-100 flex flex-col"> */}
-          <CollectiveSidebar groups={groups} />
+          <CollectiveSidebar/>
           {/* </div> */}
           {/* Hi Victor */}
           {/* Main Content */}
