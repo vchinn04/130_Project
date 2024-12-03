@@ -32,6 +32,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {Input} from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function GenerateTeamsButton({
   selectedCollective,
@@ -41,6 +43,7 @@ export default function GenerateTeamsButton({
   let id_split = selectedCollective.split("_");
 
   const [isOpen, setIsOpen] = React.useState(false); // State to control the Dialog (popup)
+  const [teamSize, setTeamSize] = React.useState(0);
 
   //states for the checkboxes
   const [IncludeOnlyPromptCompleted, setIncludeOnlyPromptCompleted] =
@@ -49,14 +52,14 @@ export default function GenerateTeamsButton({
 
   //function to handle form submission
   const handleGenerateTeams = () => {
-    console.log("Generating teams with settings:");
-    console.log("Include Only Prompt Completed:", IncludeOnlyPromptCompleted);
-    console.log("Include All Users:", IncludeAll);
-
+    // console.log("Generating teams with settings:");
+    // console.log("Include Only Prompt Completed:", IncludeOnlyPromptCompleted);
+    // console.log("Include All Users:", IncludeAll);
+    // console.log("Team Size:", teamSize);
     // Add OpenAI API call or other logic here
     //if include all is true, send all users to openai api
     //if include only prompt completed is true, send only those who have completed the prompt
-
+    
     // Close the dialog after submission
     setIsOpen(false);
   };
@@ -68,6 +71,15 @@ export default function GenerateTeamsButton({
     //or we can have it just always be false when reopened
     setIncludeOnlyPromptCompleted(false);
     setIncludeAll(false);
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    let parseint =parseInt(event.target.value)
+    if (isNaN(parseint)) {
+      setTeamSize(0);
+    } else{
+      setTeamSize(parseint);
+    }
   };
 
   return (
@@ -86,38 +98,18 @@ export default function GenerateTeamsButton({
               </DialogDescription>
             </DialogHeader>
 
-            {/* Checkboxes */}
+            {/* Settings */}
             <div className="flex flex-col space-y-3">
               <div className="flex items-center gap-3">
-                <Checkbox
-                  id="includeOnlyPromptCompleted"
-                  checked={IncludeOnlyPromptCompleted}
-                  onCheckedChange={(checked) =>
-                    setIncludeOnlyPromptCompleted(checked === true)
-                  } // Updates state
-                  className="h-5 w-5"
+              {/* <TextField placeholder="Number of teams to generate" type= "number" onChange={handleTextChange}/> */}
+              <Textarea
+                  placeholder="Number of teams to generate" 
+                  // type= "number"
+                  className="h-full"
+                  value={teamSize}
+                  onChange={handleTextChange}
                 />
-                <label
-                  htmlFor="includeOnlyPromptCompleted"
-                  className="text-md font-large flex-1 leading-tight"
-                >
-                  Include only those who have completed the prompt
-                </label>
-              </div>
-              <div className="flex items-center gap-3">
-                <Checkbox
-                  id="includeAll"
-                  checked={IncludeAll}
-                  onCheckedChange={(checked) => setIncludeAll(checked === true)} // Updates state
-                  className="h-5 w-5"
-                />
-                <label
-                  htmlFor="includeAll"
-                  className="text-md font-large flex-1 leading-tight" // max-w-[75%]
-                >
-                  Include all users (regardless of team's locked status)
-                </label>
-              </div>
+            </div>
             </div>
 
             {/* Confirm/Submit Button */}
