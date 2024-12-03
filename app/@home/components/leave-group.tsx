@@ -12,17 +12,32 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { useUser, UserButton } from "@clerk/nextjs";
+
 export default function LeaveGroup({
   selectedCollective,
 }: {
   selectedCollective: any;
 }) {
   let id_split = selectedCollective.split("_");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    alert(`Left Group ${id_split[0]}`);
+  const { isSignedIn, user, isLoaded } = useUser();
+	if (!isLoaded) return null;
+  if (!isSignedIn || !user) return null;
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      const response = await fetch(`leave-group/${selectedCollective}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create group");
+      }
+      // //await user.reload();
+    } catch (error) {
+      console.error("Error with response from server:", error);
+    }
   };
 
   return (
