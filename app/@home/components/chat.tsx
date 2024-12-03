@@ -73,7 +73,7 @@ export default function Chat({
     const userCredentials = await signInWithCustomToken(auth, token || "");
     // The userCredentials.user object can call the methods of
     // the Firebase platform as an authenticated user.
-    console.log("User:", userCredentials.user);
+    // console.log("User:", userCredentials.user);
     // getFirestoreData();
   };
   signIntoFirebaseWithClerk();

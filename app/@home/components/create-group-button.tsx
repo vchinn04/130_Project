@@ -150,7 +150,7 @@ export default function CreateGroupButton({
               className="mt-1 block w-full"
             />
           </div>
-          <div>
+          {/* <div>
             <label
               htmlFor="groupDescription"
               className="block text-sm font-medium text-gray-700"
@@ -166,7 +166,7 @@ export default function CreateGroupButton({
               required
               className="mt-1 block w-full p-2 border rounded-md"
             />
-          </div>
+          </div> */}
           <div>
             <label
               htmlFor="promptOption"
