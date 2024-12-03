@@ -18,6 +18,7 @@ import {
 const dynamoDB = new DynamoDB.DocumentClient();
 const TABLE_NAME = Resource.GroupsTable.name; // Bind the table name to the resource defined in sst.config.ts
 
+
 /**
  * Creates a new group with all required subtables in a single transaction.
  * @param owner - The user ID of the group owner.
@@ -499,3 +500,76 @@ export async function deleteTeams(groupId: GroupId) {
     })
     .promise();
 }
+
+/*
+ * Removes a user from a group. If the group becomes empty, deletes the entire group.
+ * @param userId - The ID of the user leaving the group.
+ * @param groupId - The ID of the group.
+ * @throws any errors that occur during the database operation.
+ */
+export async function leaveGroup(userId: UserId, groupId: GroupId) {
+  try {
+    // Retrieve group information and members
+    const groupInfo = await getGroupInfo(groupId);
+    if (!groupInfo) {
+      throw new Error(`Group with ID ${groupId} does not exist.`);
+    }
+
+    const groupMembers = await getGroupMembers(groupId);
+    if (!groupMembers || !groupMembers.members[userId]) {
+      throw new Error(`User with ID ${userId} is not a member of group ${groupId}.`);
+    }
+
+    // Prevent the group owner from leaving directly
+    if (groupInfo.owner === userId) {
+      throw new Error(
+        `User with ID ${userId} is the owner of the group and cannot leave directly.`
+      );
+    }
+
+    // Remove the user from the group members
+    await removeGroupMember(groupId, userId);
+
+    // Decrement the member count in the group's info table
+    const updatedMemberCount = Math.max(groupInfo.memberCount - 1, 0);
+    await updateGroupInfo(groupId, { memberCount: updatedMemberCount });
+
+    // If no members remain, delete the group
+    if (updatedMemberCount === 0) {
+      await deleteGroup(groupId);
+      return {
+        success: true,
+        message: `Group ${groupId} has been deleted as it has no remaining members.`,
+      };
+    }
+
+    return {
+      success: true,
+      message: `User with ID ${userId} successfully left group ${groupId}.`,
+    };
+  } catch (error) {
+    console.error(`Error in leaveGroup for user ${userId} and group ${groupId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Deletes an entire group from the database, including all subtables.
+ * @param groupId - The ID of the group to delete.
+ * @throws any errors that occur during the database operation.
+ */
+async function deleteGroup(groupId: GroupId) {
+  try {
+    await Promise.all([
+      deleteGroupInfo(groupId),
+      deleteGroupMembers(groupId),
+      deleteTeams(groupId),
+    ]);
+
+    console.log(`Group with ID ${groupId} and its subtables have been deleted.`);
+  } catch (error) {
+    console.error(`Failed to delete group ${groupId}:`, error);
+    throw error;
+  }
+}
+
