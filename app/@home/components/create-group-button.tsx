@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/lib/db-utils/schemas";
+// import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
 import { useUser } from '@clerk/nextjs';
 
 
