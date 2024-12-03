@@ -289,46 +289,20 @@ export async function getTeams(groupId: GroupId): Promise<TeamSubtable | null> {
 }
 
 /**
- * Updates a TeamSubtable entry in the database with the provided field update values. Generally for adding or removing lots of teams at once.
- * Use the other functions for more specific updates.
+ * Replaces the entire TeamSubtable entry in the database with a new one.
  * @param groupId - The ID of the group to update the teams for.
- * @param updates - The set of updates to apply to the team.
- * @returns the TeamSubtable entry that was updated in the database.
+ * @param newTeamsTable - The new TeamSubtable to replace the existing one.
  * @throws any errors that occur during the database operation.
  */
 export async function updateTeamsTable(
-  groupId: GroupId,
-  updates: {
-    teamId: string;
-    fieldUpdates:
-      | Partial<Omit<TeamSubtable, keyof ImmutableTeamSubtableProperties>>
-      | Partial<Team>;
-  }
+  newTeamsTable: TeamSubtable
 ) {
-  const updateExpressions: string[] = [];
-  const expressionAttributeNames: { [key: string]: string } = {};
-  const expressionAttributeValues: { [key: string]: any } = {};
-
-  Object.entries(updates.fieldUpdates).forEach(([key, value], index) => {
-    const fieldPath = updates.teamId
-      ? `teams.${updates.teamId}.${key}` // Update specific team field
-      : key; // Update top-level field
-
-    updateExpressions.push(`#field${index} = :value${index}`);
-    expressionAttributeNames[`#field${index}`] = fieldPath;
-    expressionAttributeValues[`:value${index}`] = value;
-  });
-
   await dynamoDB
-    .update({
+    .put({
       TableName: TABLE_NAME,
-      Key: {
-        groupId: groupId,
-        subTable: "teams",
+      Item: {
+        ...newTeamsTable,
       },
-      UpdateExpression: `SET ${updateExpressions.join(", ")}`,
-      ExpressionAttributeNames: expressionAttributeNames,
-      ExpressionAttributeValues: expressionAttributeValues,
     })
     .promise();
 }

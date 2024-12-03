@@ -107,7 +107,7 @@ const PromptAnswerButton = ({ selectedCollective }: { selectedCollective: any })
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">Answer the prompt:</DialogTitle>
           <DialogDescription className="text-sm text-gray-500">
-            {(isPending || isError) ? "Answer the prompt to join the group." : data.info.prompt}
+            {(isPending || isError) ? "Answer the prompt to join the group." : (data?.info?.prompt || "No prompt found")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">

@@ -93,27 +93,21 @@ export async function GET(
     );
 
     // update the teams table in the database with the new teams
-    const generatedAt = new Date();
+    const teamsTable: TeamSubtable = {
+      groupId: groupId,
+      subTable: "teams",
+      generatedAt: new Date(),
+      teams: teams,
+    };
     try {
-      await updateTeamsTable(groupId, {
-        teamId: "teams",
-        fieldUpdates: {
-          generatedAt: generatedAt,
-          teams: teams,
-        },
-      });
+      await updateTeamsTable(teamsTable);
     } catch (error) {
       console.error(error);
       return Response.json({ error: `Failed to update teams table: ${error}` }, { status: 500 });
     }
 
     // return the teams to the client.
-    return Response.json({
-      groupId: groupId,
-      subTable: "teams",
-      generatedAt: generatedAt,
-      teams: teams,
-    } as TeamSubtable, { status: 200 });
+    return Response.json(teamsTable, { status: 200 });
   } catch (error) {
     console.error(error);
     return Response.json({ error: `Failed to generate teams: ${error} k: ${k}` }, { status: 500 });

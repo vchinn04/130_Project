@@ -36,6 +36,8 @@ export default function GroupButton({
     setSelectedCollective(groupId);
   }
 
+  console.log(`groupData: ${JSON.stringify(groupData.teams.teams)}`);
+
   return (
     <>
       <Collapsible className="group/collapsible">
@@ -61,6 +63,7 @@ export default function GroupButton({
           <CollapsibleContent>
             <SidebarMenuSub>
               {groupData.teams.teams.map((team: Team, index: number) => {
+                console.log(`team: ${JSON.stringify(team)}`);
                 return (
                   <TeamButton
                     key={index}
