@@ -53,7 +53,7 @@ export default function CreateGroupButton({
     setPrompt(e.target.value);
     setPromptText(e.target.value);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -112,7 +112,7 @@ export default function CreateGroupButton({
         teams: []
       }
     };
-    
+
     onCreateGroup(newGroup);
 
     alert(`Group created with ID: ${newGroupId}`);
