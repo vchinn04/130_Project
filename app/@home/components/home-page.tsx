@@ -137,6 +137,7 @@ export default function CollectiveSidebar() {
       <Main
         selectedCollective={selectedCollective}
         handleCreateGroup={handleCreateGroup}
+        groups={groups}
       />
       <MembersSidebar groups={groups} selectedCollective={selectedCollective} />
     </>

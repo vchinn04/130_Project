@@ -36,6 +36,7 @@ import { GroupItemMap } from "@/lib/db-utils/schemas";
 import { UserProfile } from "@/app/@home/use-user";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import React, { useEffect, useState } from "react";
+import {Input} from "@/components/ui/input";
 
 export function GroupSettingsModal({ groupId, }: { groupId: GroupId; }) {
   const [open, setOpen] = React.useState(false); // default state of the dialog is closed (false)
@@ -43,6 +44,7 @@ export function GroupSettingsModal({ groupId, }: { groupId: GroupId; }) {
   const [prompt, setPrompt] = React.useState(""); // replace with a state hooked-up to the query logic
   const [isOwner, setIsOwner] = React.useState(false);
   const [allowJoinById, setAllowJoinById] = React.useState(false);
+  const [teamAmount, setTeamAmount] = React.useState(0);
 
   const res = UserProfile() as { ownedGroups: string[]; joinedGroups: string[]};
   // console.log(res.ownedGroups);
@@ -71,6 +73,7 @@ export function GroupSettingsModal({ groupId, }: { groupId: GroupId; }) {
     if (data) {
       setPrompt(data.prompt);
       setAllowJoinById(data.allowJoinById);
+      setTeamAmount(data.teamCount);
     }
   }, [data]);
 
@@ -87,6 +90,7 @@ export function GroupSettingsModal({ groupId, }: { groupId: GroupId; }) {
     const updatedFields = {
       prompt: prompt,
       locked: allowJoinById,
+      teamCount: teamAmount,
     };
 
     fetch(`update-group-info/${groupId}`, {
@@ -134,14 +138,6 @@ return (
                       <SidebarMenuItem>
                         Allow people to join by group ID
                         <Switch checked={allowJoinById} onCheckedChange={setAllowJoinById}/>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        Members: {data.memberCount}
-                        {/* //click to retrieve member names */}
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        Teams: {data.teamCount}
-                        {/* //click to retrieve team names */}
                       </SidebarMenuItem>
                     </SidebarMenu>
                   </SidebarGroupContent>
