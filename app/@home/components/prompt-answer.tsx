@@ -52,7 +52,6 @@ const PromptAnswerButton = ({ selectedCollective }: { selectedCollective: any })
         });
 
         if (!response.ok) throw new Error("Failed to fetch ready-user-prompt-response");
-        console.log(`ready with prompt ${promptAnswer}!!!!`);
       } else {
         const response = await fetch(`disable-user-ready/${selectedCollective}`, {
           method: "GET",
@@ -60,7 +59,6 @@ const PromptAnswerButton = ({ selectedCollective }: { selectedCollective: any })
         });
 
         if (!response.ok) throw new Error("Failed to fetch disable ready");
-        console.log("disable!!!!");
       }
     } catch (error) {
       console.error("Error occurred:", error);
