@@ -25,29 +25,31 @@ export default function WelcomePage() {
             marginBottom: "1rem",
           }}
         >
-          Welcome to Group-Manager-Thing
+          Welcome to MatchAI
         </h1>
         <p style={{ fontSize: "1.125rem", marginBottom: "2rem" }}>
           Effortlessly manage your teams and projects with our intuitive
           software.
         </p>
         <p style={{ fontSize: "1.125rem", marginBottom: "2rem" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
+          MatchAI is a space for professional and academic teams to find
+          collaborators that are perfectly matched to their goals and
+          personalities. It aims to remove the main drawbacks of finding a
+          group, one of which is members not accurately or honestly describing
+          their preferences in teams due to not feeling comfortable in their
+          environment, encouraging applicants to be honest in their answers
+          since they would be kept private. MatchAI uses AI insights to ideally
+          match them with the most compatible people.
         </p>
         <p style={{ fontSize: "1.125rem", marginBottom: "2rem" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
+          A key aspect of the platform is the way it addresses gaps in skill
+          sets. Developers, for instance, may be hesitant to reveal areas where
+          they lack expertise, fearing that it could impact their opportunities.
+          This allows developers to contribute effectively in areas they excel
+          at while having the opportunity to learn from their teammates in other
+          areas. The AI-driven matchings ensure that each member brings
+          something unique to the table, fostering an environment where
+          collaboration is maximized and productivity is enhanced.
         </p>
         {/* <button
           style={{

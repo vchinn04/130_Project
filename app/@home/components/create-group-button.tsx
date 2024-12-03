@@ -53,7 +53,7 @@ export default function CreateGroupButton({
     setPrompt(e.target.value);
     setPromptText(e.target.value);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -67,12 +67,7 @@ export default function CreateGroupButton({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          groupName,
-          groupDescription,
-          prompt,
-        }),
+        }
         //parse response
       });
     } catch (error) {
@@ -83,37 +78,37 @@ export default function CreateGroupButton({
     const newGroupId = `group-${Date.now()}`;
     setGroupId(newGroupId);
 
-    const newGroup = isSignedIn&&{
-      info: {
-        groupId: groupId,
-        subTable: "info",
-        createdAt: new Date(),
-        displayName: groupName,
-        owner: user.id,
-        locked: false,
-        prompt: prompt,
-        memberCount: 10,
-        teamCount: 2
-      },
-      members: {
-        groupId: groupId,
-        subTable: "members",
-        members: {
-          [user.id]: {
-            ready: false,
-            promptAnswer: "Example answer"
-          }
-        }
-      },
-      teams: {
-        groupId: groupId,
-        subTable: "teams",
-        generatedAt: new Date(),
-        teams: []
-      }
-    };
+    // const newGroup = isSignedIn&&{
+    //   info: {
+    //     groupId: groupId,
+    //     subTable: "info",
+    //     createdAt: new Date(),
+    //     displayName: groupName,
+    //     owner: user.id,
+    //     locked: false,
+    //     prompt: prompt,
+    //     memberCount: 10,
+    //     teamCount: 2
+    //   },
+    //   members: {
+    //     groupId: groupId,
+    //     subTable: "members",
+    //     members: {
+    //       [user.id]: {
+    //         ready: false,
+    //         promptAnswer: "Example answer"
+    //       }
+    //     }
+    //   },
+    //   teams: {
+    //     groupId: groupId,
+    //     subTable: "teams",
+    //     generatedAt: new Date(),
+    //     teams: []
+    //   }
+    // };
     
-    onCreateGroup(newGroup);
+    // onCreateGroup(newGroup);
 
     alert(`Group created with ID: ${newGroupId}`);
   };
@@ -150,7 +145,7 @@ export default function CreateGroupButton({
               className="mt-1 block w-full"
             />
           </div>
-          <div>
+          {/* <div>
             <label
               htmlFor="groupDescription"
               className="block text-sm font-medium text-gray-700"
@@ -166,7 +161,7 @@ export default function CreateGroupButton({
               required
               className="mt-1 block w-full p-2 border rounded-md"
             />
-          </div>
+          </div> */}
           <div>
             <label
               htmlFor="promptOption"

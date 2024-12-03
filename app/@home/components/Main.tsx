@@ -18,8 +18,8 @@ const Main = ({
         <LeaveGroup selectedCollective={selectedCollective} />
         <GenerateTeamsButton selectedCollective={selectedCollective} />
         <CreateGroupButton onCreateGroup={handleCreateGroup} />
-        <JoinGroupButton />
-        <PromptAnswerButton />
+        <JoinGroupButton onCreateGroup={handleCreateGroup} />
+        {selectedCollective.trim()!==""&&<PromptAnswerButton selectedCollective={selectedCollective} />}
       </div>
     </main>
   );
