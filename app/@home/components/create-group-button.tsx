@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import {
   Dialog,
@@ -7,11 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-// import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
 import { useUser } from "@clerk/nextjs";
 
 export default function CreateGroupButton({
@@ -24,12 +23,11 @@ export default function CreateGroupButton({
     color: "What is your fav color",
   };
   const [groupName, setGroupName] = useState("");
-  const [groupDescription, setGroupDescription] = useState("");
   const [prompt, setPrompt] = useState(defaultPrompts.animal);
   const [customPrompt, setCustomPrompt] = useState(false);
   const [promptText, setPromptText] = useState("");
   const [error, setError] = useState("");
-  const [groupId, setGroupId] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { isSignedIn, user, isLoaded } = useUser();
 
   const handlePromptOptionChange = (
@@ -40,7 +38,7 @@ export default function CreateGroupButton({
       setPrompt(promptText);
     } else {
       setCustomPrompt(false);
-      setPrompt(e.target.innerText);
+      setPrompt(e.target.value);
     }
   };
 
@@ -62,62 +60,37 @@ export default function CreateGroupButton({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-        }
-        //parse response
+        },
       });
+      if (!response.ok) {
+        throw new Error("Failed to create group");
+      }
     } catch (error) {
       console.error("Error with response from server:", error);
     }
 
     // Generate a unique group ID -> placeholder for now
     const newGroupId = `group-${Date.now()}`;
-    setGroupId(newGroupId);
-
-    // const newGroup = isSignedIn&&{
-    //   info: {
-    //     groupId: groupId,
-    //     subTable: "info",
-    //     createdAt: new Date(),
-    //     displayName: groupName,
-    //     owner: user.id,
-    //     locked: false,
-    //     prompt: prompt,
-    //     memberCount: 10,
-    //     teamCount: 2
-    //   },
-    //   members: {
-    //     groupId: groupId,
-    //     subTable: "members",
-    //     members: {
-    //       [user.id]: {
-    //         ready: false,
-    //         promptAnswer: "Example answer"
-    //       }
-    //     }
-    //   },
-    //   teams: {
-    //     groupId: groupId,
-    //     subTable: "teams",
-    //     generatedAt: new Date(),
-    //     teams: []
-    //   }
-    // };
-    
-    // onCreateGroup(newGroup);
-
     alert(`Group created with ID: ${newGroupId}`);
+
+    // Reset form fields
+    setGroupName("");
+    setPrompt(defaultPrompts.animal);
+    setCustomPrompt(false);
+    setPromptText("");
+
+    // Close the dialog
+    setDialogOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button>Create Group</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            Create Group
-          </DialogTitle>
+          <DialogTitle className="text-lg font-semibold">Create Group</DialogTitle>
           <DialogDescription className="text-sm text-gray-500">
             Fill out the form to create a new group.
           </DialogDescription>
@@ -140,23 +113,6 @@ export default function CreateGroupButton({
               className="mt-1 block w-full"
             />
           </div>
-          {/* <div>
-            <label
-              htmlFor="groupDescription"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Group Description
-            </label>
-            <textarea
-              id="groupDescription"
-              name="groupDescription"
-              placeholder="Group Description"
-              value={groupDescription}
-              onChange={(e) => setGroupDescription(e.target.value)}
-              required
-              className="mt-1 block w-full p-2 border rounded-md"
-            />
-          </div> */}
           <div>
             <label
               htmlFor="promptOption"
@@ -170,9 +126,12 @@ export default function CreateGroupButton({
               onChange={handlePromptOptionChange}
               required
               className="mt-1 block w-full p-2 border rounded-md"
+              value={customPrompt ? "custom" : prompt}
             >
               {Object.entries(defaultPrompts).map(([key, value]) => (
-                <option key={key}>{value}</option>
+                <option key={key} value={value}>
+                  {value}
+                </option>
               ))}
               <option value="custom">Custom</option>
             </select>
@@ -190,7 +149,7 @@ export default function CreateGroupButton({
                   id="promptValue"
                   name="promptValue"
                   placeholder="Your Custom Prompt"
-                  value={prompt}
+                  value={promptText}
                   onChange={handlePromptChange}
                 />
               </>
@@ -201,14 +160,6 @@ export default function CreateGroupButton({
             Create Group
           </Button>
         </form>
-        {groupId && (
-          <div className="mt-4">
-            <p>Group created with ID: {groupId}</p>
-          </div>
-        )}
-        <DialogClose asChild>
-          <Button className="mt-4 w-full">Close</Button>
-        </DialogClose>
       </DialogContent>
     </Dialog>
   );
