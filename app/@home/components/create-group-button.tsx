@@ -12,8 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 // import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
-import { useUser } from '@clerk/nextjs';
-
+import { useUser } from "@clerk/nextjs";
 
 export default function CreateGroupButton({
   onCreateGroup,
@@ -21,10 +20,9 @@ export default function CreateGroupButton({
   onCreateGroup: any;
 }) {
   const defaultPrompts = {
-   animal:"What is your fav animal",
-    color:"What is your fav color"
-
-}
+    animal: "What is your fav animal",
+    color: "What is your fav color",
+  };
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [prompt, setPrompt] = useState(defaultPrompts.animal);
@@ -32,8 +30,7 @@ export default function CreateGroupButton({
   const [promptText, setPromptText] = useState("");
   const [error, setError] = useState("");
   const [groupId, setGroupId] = useState("");
-  const { isSignedIn, user, isLoaded } = useUser()
-
+  const { isSignedIn, user, isLoaded } = useUser();
 
   const handlePromptOptionChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -47,9 +44,7 @@ export default function CreateGroupButton({
     }
   };
 
-  const handlePromptChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handlePromptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrompt(e.target.value);
     setPromptText(e.target.value);
   };
@@ -57,7 +52,7 @@ export default function CreateGroupButton({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!groupName || !groupDescription || !prompt) {
+    if (!groupName) {
       setError("All fields except prompt answer are required.");
       return;
     }
@@ -83,7 +78,7 @@ export default function CreateGroupButton({
     const newGroupId = `group-${Date.now()}`;
     setGroupId(newGroupId);
 
-    const newGroup = isSignedIn&&{
+    const newGroup = isSignedIn && {
       info: {
         groupId: groupId,
         subTable: "info",
@@ -93,7 +88,7 @@ export default function CreateGroupButton({
         locked: false,
         prompt: prompt,
         memberCount: 10,
-        teamCount: 2
+        teamCount: 2,
       },
       members: {
         groupId: groupId,
@@ -101,16 +96,16 @@ export default function CreateGroupButton({
         members: {
           [user.id]: {
             ready: false,
-            promptAnswer: "Example answer"
-          }
-        }
+            promptAnswer: "Example answer",
+          },
+        },
       },
       teams: {
         groupId: groupId,
         subTable: "teams",
         generatedAt: new Date(),
-        teams: []
-      }
+        teams: [],
+      },
     };
 
     onCreateGroup(newGroup);
@@ -182,9 +177,7 @@ export default function CreateGroupButton({
               className="mt-1 block w-full p-2 border rounded-md"
             >
               {Object.entries(defaultPrompts).map(([key, value]) => (
-                <option key={key}>
-                  {value}
-                </option>
+                <option key={key}>{value}</option>
               ))}
               <option value="custom">Custom</option>
             </select>
