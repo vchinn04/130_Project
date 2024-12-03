@@ -20,7 +20,8 @@ import { GroupSettingsModal } from "./group-settings-modal";
 import GenerateTeamsButton from "./generate-teams-button";
 import getClerkUserList from "@/lib/chat-utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import { Crown } from 'lucide-react';
+import { group } from "console";
 /*************  ✨ Codeium Command ⭐  *************/
 /**
  * The MembersSidebar component displays a sidebar with information about the currently selected collective.
@@ -40,9 +41,11 @@ export default function MembersSidebar({
 }) {
   let id_split = selectedCollective.split("_");
   let collective_data: GroupItemMap | Team | undefined = groups[id_split[0]];
+  let groupInfo  = null;
   let member_id_arr: string[] = [];
   if (collective_data !== undefined) {
     member_id_arr = Object.keys(collective_data.members.members);
+    groupInfo=collective_data.info
   }
 
   if (collective_data !== undefined && id_split.length > 1) {
@@ -67,7 +70,6 @@ export default function MembersSidebar({
       setUserIdMap(value); // Find the users of messages
     });
   }, [selectedCollective]);
-
   return (
     <Sidebar side="right" className="w-64 bg-gray-300">
       {" "}
@@ -124,6 +126,7 @@ export default function MembersSidebar({
                     <></>
                   )}
                   <span className="ml-2">{username}</span>
+                  {groupInfo&&id==groupInfo.owner&&<Crown className="ml-2"/>}
                 </div>
               );
             })}
