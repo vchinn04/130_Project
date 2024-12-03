@@ -31,7 +31,7 @@ export default function CollectiveSidebar() {
 
   const metaData = user.publicMetadata;
   const groupIds = [
-    ...((metaData.joinedGroups || []) as GroupId[]), 
+    ...((metaData.joinedGroups || []) as GroupId[]),
     ...((metaData.ownedGroups || []) as GroupId[])
     ]
   const [groups, setGroups] = useState<Record<GroupId, GroupItemMap>>({});
@@ -78,6 +78,8 @@ export default function CollectiveSidebar() {
     }));
   };
 
+  console.log(`groups: ${JSON.stringify(groups)}`);
+
   return (
     <>
       <Sidebar className="w-64 bg-gray-900">
@@ -95,16 +97,19 @@ export default function CollectiveSidebar() {
           <SidebarMenu>
             {/* Display groups incrementally */}
             {selectedView === View.Groups
-              ? Object.keys(groups).map((key) => (
-                  <GroupButton
-                    key={key}
+              ? Object.keys(groups).map((key) => {
+                  console.log(`teams: ${JSON.stringify(groups[key].teams.teams)}`);
+                  return (
+                    <GroupButton
+                      key={key}
                     groupId={key}
                     groupData={groups[key]}
                     selectedCollective={selectedCollective}
                     setSelectedCollective={setSelectedCollective}
-                  />
-                ))
-              : Object.keys(groups).flatMap((key) =>
+                    />
+                  );
+                })
+              : Object.keys(groups).map((key) =>
                   groups[key].teams.teams.map((team: Team, tkey: number) => (
                     <TeamButton
                       key={tkey}

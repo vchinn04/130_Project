@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useUser } from "@clerk/nextjs";
 
 export default function TeamButton({
   teamId,
@@ -27,7 +28,7 @@ export default function TeamButton({
 }) {
   let teamStringId: string = groupId + "_" + teamId;
   console.log(teamData);
-  let owner_id = "userid1";
+  const { isSignedIn, user, isLoaded } = useUser();
   function handleClick() {
     setSelectedCollective(teamStringId);
   }
@@ -39,7 +40,7 @@ export default function TeamButton({
   // }
   return (
     <>
-      {teamData.members.includes(owner_id) || owner_id == groupOwner ? (
+      { isSignedIn && isLoaded && (teamData.members.includes(user?.id) || user?.id == groupOwner) ? (
         <SidebarMenuItem className="primary primary-foreground">
           <SidebarMenuButton
             onClick={handleClick}
