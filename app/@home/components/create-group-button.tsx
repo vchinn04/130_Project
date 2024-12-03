@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
+import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/lib/db-utils/schemas";
 import { useUser } from '@clerk/nextjs';
 
 
@@ -53,7 +53,7 @@ export default function CreateGroupButton({
     setPrompt(e.target.value);
     setPromptText(e.target.value);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -112,7 +112,7 @@ export default function CreateGroupButton({
         teams: []
       }
     };
-    
+
     onCreateGroup(newGroup);
 
     alert(`Group created with ID: ${newGroupId}`);

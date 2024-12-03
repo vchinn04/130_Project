@@ -31,17 +31,52 @@ export async function generateEmbeddingsWithContext(
 }
 
 
+// export async function summarizeCluster(
+//   members: string[],
+//   contextPrompt: string
+// ): Promise<string> {
+//   const prompt = `
+//     Context: ${contextPrompt}
+//     Given the following team members: ${members.join(", ")}, summarize the team's strengths, potential focus areas, and how they align with the context.
+//   `;
+
+//   const completionResponse = await openai.chat.completions.create({
+//     model: "gpt-4o-2024-11-20",
+//     messages: [{ role: "user", content: prompt }],
+//     max_tokens: 200,
+//   });
+
+//   return completionResponse.choices[0].message.content?.trim() ?? "";
+// }
+
 export async function summarizeCluster(
   members: string[],
-  contextPrompt: string
+  contextPrompt: string,
+  responses: Record<string, string>  // Add responses parameter
 ): Promise<string> {
+  // Gather all responses from cluster members
+  const clusterResponses = members
+    .map(memberId => responses[memberId])
+    .filter(Boolean)
+    .join("\n\n");
+
   const prompt = `
     Context: ${contextPrompt}
-    Given the following team members: ${members.join(", ")}, summarize the team's strengths, potential focus areas, and how they align with the context.
+
+    Team Member Responses:
+    ${clusterResponses}
+
+    Based on the above responses, provide a very brief and concise summary of:
+    2. Their collective complementary traits
+    3. A suggestion for the team relevant to the context
+
+    Keep the summary focused and brief. Do not identify individual team members.
+    be blunt, specific, and do not speak as though you are responding to this prompt.
+    Do not use vague language. provide highly specific commentary or nothing.
   `;
 
   const completionResponse = await openai.chat.completions.create({
-    model: "gpt-4o-2024-11-20",
+    model: "gpt-4-0125-preview",  // Updated to latest model
     messages: [{ role: "user", content: prompt }],
     max_tokens: 200,
   });
