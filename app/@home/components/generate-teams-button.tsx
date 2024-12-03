@@ -34,13 +34,27 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {GroupId} from "@/types/globals";
+import { GroupItemMap } from "@/lib/db-utils/schemas";
 
 export default function GenerateTeamsButton({
   selectedCollective,
+  groups
 }: {
   selectedCollective: any;
+  groups: Record<GroupId, GroupItemMap>;
 }) {
   let id_split = selectedCollective.split("_");
+  let groupId = "";
+  let prompt = "";
+  let collective_data: GroupItemMap  | undefined = groups[id_split[0]];
+  if (collective_data !== undefined) {
+    groupId = collective_data.info.groupId;
+    prompt = collective_data.info.prompt;
+  }
+  console.log(collective_data);
+
+ 
 
   const [isOpen, setIsOpen] = React.useState(false); // State to control the Dialog (popup)
   const [teamSize, setTeamSize] = React.useState(0);
@@ -51,7 +65,7 @@ export default function GenerateTeamsButton({
   const [IncludeAll, setIncludeAll] = React.useState(false);
 
   //function to handle form submission
-  const handleGenerateTeams = () => {
+  const handleGenerateTeams = async () => {
     // console.log("Generating teams with settings:");
     // console.log("Include Only Prompt Completed:", IncludeOnlyPromptCompleted);
     // console.log("Include All Users:", IncludeAll);
@@ -59,7 +73,20 @@ export default function GenerateTeamsButton({
     // Add OpenAI API call or other logic here
     //if include all is true, send all users to openai api
     //if include only prompt completed is true, send only those who have completed the prompt
-    
+    const url = `generate-teams/${groupId}/${teamSize.toString()}/${prompt}`
+    console.log(url);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+        //parse response
+      });
+      console.log(response);
+    } catch (error) {
+      console.error("Error with response from server:", error);
+    }
     // Close the dialog after submission
     setIsOpen(false);
   };
