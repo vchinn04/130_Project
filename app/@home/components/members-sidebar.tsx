@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
 import { GroupId } from "@/types/globals";
 import {
@@ -18,7 +18,10 @@ import {
 } from "@/components/ui/sidebar";
 import { GroupSettingsModal } from "./group-settings-modal";
 import GenerateTeamsButton from "./generate-teams-button";
-
+import getClerkUserList from "@/lib/chat-utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Crown } from 'lucide-react';
+import { group } from "console";
 /*************  ✨ Codeium Command ⭐  *************/
 /**
  * The MembersSidebar component displays a sidebar with information about the currently selected collective.
@@ -38,9 +41,11 @@ export default function MembersSidebar({
 }) {
   let id_split = selectedCollective.split("_");
   let collective_data: GroupItemMap | Team | undefined = groups[id_split[0]];
+  let groupInfo  = null;
   let member_id_arr: string[] = [];
   if (collective_data !== undefined) {
     member_id_arr = Object.keys(collective_data.members.members);
+    groupInfo=collective_data.info
   }
 
   if (collective_data !== undefined && id_split.length > 1) {
@@ -50,6 +55,21 @@ export default function MembersSidebar({
     member_id_arr = collective_data.members;
   }
 
+  const [userIdMap, setUserIdMap] = useState(
+    {} as Record<string, (string | undefined)[]>
+  );
+
+  useEffect(() => {
+    const userIdList: Record<string, boolean> = {};
+
+    member_id_arr.forEach((id) => {
+      userIdList["+" + id] = true; // Store id, dict helps to deduplicate
+    });
+
+    getClerkUserList(Object.keys(userIdList)).then((value) => {
+      setUserIdMap(value); // Find the users of messages
+    });
+  }, [selectedCollective]);
   return (
     <Sidebar side="right" className="w-64 bg-gray-300">
       {" "}
@@ -74,14 +94,39 @@ export default function MembersSidebar({
         <SidebarGroup>
           <SidebarGroupContent>
             {member_id_arr.map((id) => {
+              let username: string | undefined =
+                userIdMap[id] !== undefined
+                  ? userIdMap[id][0] !== undefined
+                    ? userIdMap[id][0]
+                    : id
+                  : "";
+
+              let src: string | undefined =
+                userIdMap[id] !== undefined
+                  ? userIdMap[id][1] !== undefined
+                    ? userIdMap[id][1]
+                    : undefined
+                  : undefined;
+
               return (
                 <div
                   key={id}
                   className="animate-appear flex p-4 justify-items-start	items-center py-2 primary-foreground"
                 >
                   {/* text-gray-200*/}
-                  <UserCircle className="mr-2" />
-                  <span>{id}</span>
+                  {src !== undefined ? (
+                    <Avatar className="animate-appear">
+                      <AvatarImage src={src} />
+                      <AvatarFallback>
+                        {" "}
+                        <UserCircle className="mr-2" />
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <></>
+                  )}
+                  <span className="ml-2">{username}</span>
+                  {groupInfo&&id==groupInfo.owner&&<Crown className="ml-2"/>}
                 </div>
               );
             })}

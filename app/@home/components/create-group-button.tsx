@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
+// import { GroupInfoSubtable, GroupMembersSubtable, TeamSubtable } from "@/types";
 import { useUser } from '@clerk/nextjs';
 
 
@@ -53,7 +53,7 @@ export default function CreateGroupButton({
     setPrompt(e.target.value);
     setPromptText(e.target.value);
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -145,7 +145,7 @@ export default function CreateGroupButton({
               className="mt-1 block w-full"
             />
           </div>
-          <div>
+          {/* <div>
             <label
               htmlFor="groupDescription"
               className="block text-sm font-medium text-gray-700"
@@ -161,7 +161,7 @@ export default function CreateGroupButton({
               required
               className="mt-1 block w-full p-2 border rounded-md"
             />
-          </div>
+          </div> */}
           <div>
             <label
               htmlFor="promptOption"
