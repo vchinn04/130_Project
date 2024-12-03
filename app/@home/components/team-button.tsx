@@ -32,11 +32,11 @@ export default function TeamButton({
     setSelectedCollective(teamStringId);
   }
 
-  let [isLocked, setIsLocked] = useState(false);
+  // let [isLocked, setIsLocked] = useState(false);
 
-  function lockHandler() {
-    setIsLocked(!isLocked);
-  }
+  // function lockHandler() {
+  //   setIsLocked(!isLocked);
+  // }
   return (
     <>
       {teamData.members.includes(owner_id) || owner_id == groupOwner ? (
@@ -48,13 +48,13 @@ export default function TeamButton({
           >
             {"Team #" + (teamId + 1)}
           </SidebarMenuButton>
-          {owner_id == groupOwner ? (
+          {/* {owner_id == groupOwner ? (
             <SidebarMenuAction className="animate-appear" onClick={lockHandler}>
               {isLocked ? <Lock /> : <LockOpen />}
             </SidebarMenuAction>
           ) : (
             <></>
-          )}
+          )} */}
         </SidebarMenuItem>
       ) : (
         <></>
