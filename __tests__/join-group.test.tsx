@@ -9,7 +9,6 @@ import "@testing-library/jest-dom";
 import JoinGroupButton from "../app/@home/components/join-group";
 import { useUser } from "@clerk/nextjs";
 
-// Mock the useUser hook from @clerk/nextjs
 jest.mock("@clerk/nextjs", () => ({
   useUser: jest.fn(),
 }));
@@ -18,7 +17,6 @@ describe("JoinGroupButton", () => {
   const mockReload = jest.fn();
 
   beforeEach(() => {
-    // Default mock implementation for a signed-in user
     (useUser as jest.Mock).mockReturnValue({
       isSignedIn: true,
       user: {
@@ -29,10 +27,8 @@ describe("JoinGroupButton", () => {
       isLoaded: true,
     });
 
-    // Mock global.fetch
     global.fetch = jest.fn();
 
-    // Mock window.alert to prevent actual alerts during tests
     window.alert = jest.fn();
   });
 
@@ -125,7 +121,7 @@ describe("JoinGroupButton", () => {
   });
 
   it("handles API failure gracefully", async () => {
-    console.error = jest.fn(); // Suppress console.error output
+    console.error = jest.fn(); 
 
     const mockFetch = jest.fn().mockRejectedValue(new Error("API Error"));
     global.fetch = mockFetch;
@@ -133,7 +129,6 @@ describe("JoinGroupButton", () => {
     render(<JoinGroupButton onCreateGroup={() => {}} />);
     fireEvent.click(screen.getByText("Join Group"));
 
-    // Enter a valid Group ID
     fireEvent.change(screen.getByPlaceholderText("Group ID"), {
       target: { value: "group123" },
     });
