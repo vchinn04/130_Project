@@ -38,7 +38,7 @@ import {
   onSnapshot,
   limit,
 } from "firebase/firestore";
-import { signInWithCustomToken } from "firebase/auth";
+import { signInWithCustomToken, Unsubscribe } from "firebase/auth";
 import { GroupId } from "@/types/globals";
 
 // Type of message entry in DB
@@ -110,7 +110,8 @@ export default function Chat({
       limit(queryLimit)
     );
 
-    const unsubscribe = onSnapshot(q, (qSnap) => {
+    let unsubscribe: Unsubscribe;
+    unsubscribe = onSnapshot(q, (qSnap) => {
       const newMessages: MessageEntry[] = [];
       const userIdList: Record<string, boolean> = {};
 
@@ -275,6 +276,7 @@ export default function Chat({
                     {val.senderId == user.id ? (
                       <ChatBubbleActionWrapper>
                         <ChatBubbleAction
+                          data-testid="trash"
                           className="size-7"
                           icon={<Trash2 />}
                           onClick={(event) => {
@@ -301,6 +303,7 @@ export default function Chat({
               value={msg}
             ></ChatInput>
             <Button
+              data-testid="send"
               variant={"ghost"}
               size="icon"
               className="rounded-full mt-1"

@@ -63,7 +63,7 @@ export default function CreateGroupButton({
         },
       });
       if (!response.ok) {
-        throw new Error("Failed to create group");
+        //throw new Error("Failed to create group");
       }
     } catch (error) {
       console.error("Error with response from server:", error);
