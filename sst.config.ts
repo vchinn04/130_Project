@@ -44,66 +44,11 @@ export default $config({
     });
 
     const promptAnswersBucket = new sst.aws.Bucket("PromptAnswersBucket", {
-      public: true, // dubious
+      public: false,
     });
 
-    // const usersTable = new sst.aws.Dynamo("UsersTable", {
-    //   fields: {
-    //     userId: "string", // UUID
-    //   },
-    //   primaryIndex: { hashKey: "userId" },
-    //   transform: {
-    //     table: {
-    //       billingMode: "PROVISIONED",
-    //       readCapacity: 1,
-    //       writeCapacity: 1,
-    //     },
-    //   },
-    // });
-
-    // const teamsTable = new sst.aws.Dynamo("TeamsTable", {
-    //   fields: {
-    //     groupId: "string", // UUID linked from GroupsTable
-    //     teamId: "number",
-    //   },
-    //   primaryIndex: { hashKey: "groupId", rangeKey: "teamId" },
-    //   transform: {
-    //     table: {
-    //       billingMode: "PROVISIONED",
-    //       readCapacity: 1,
-    //       writeCapacity: 1,
-    //     },
-    //   },
-    // });
-
-    // const messagesTable = new sst.aws.Dynamo("MessagesTable", {
-    //   fields: {
-    //     chatInstanceId: "string", // either a groupId or a team Primary Key depending on the chat
-    //     timestamp: "string",
-    //     senderID: "string",
-    //   },
-    //   primaryIndex: { hashKey: "chatInstanceId", rangeKey: "timestamp" },
-    //   // a better term would probably be "secondaryIndexes"
-    //   transform: {
-    //     table: {
-    //       billingMode: "PROVISIONED",
-    //       readCapacity: 1,
-    //       writeCapacity: 1,
-    //       globalSecondaryIndexes: [
-    //         // This index is for querying all of the messages from a user from within given chat
-    //         {
-    //           name: "sendersIndexedByChat",
-    //           hashKey: "chatInstanceId",
-    //           rangeKey: "senderID",
-    //           projectionType: "ALL",
-    //           readCapacity: 1,
-    //           writeCapacity: 1,
-    //         },
-    //       ],
-    //     },
-    //   },
-    // });
-
+    // All secret are provisioned in the Pulumi secrets manager on developer devices, then accessed
+    // here during the build and deploy process.
     const NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = new sst.Secret("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
     const CLERK_SECRET_KEY = new sst.Secret("CLERK_SECRET_KEY");
     const OPENAI_API_KEY = new sst.Secret("OPENAI_API_KEY");
@@ -114,11 +59,8 @@ export default $config({
     // DEFAULT_CACHE_POLICY_ALLOWED_HEADERS = ["x-open-next-cache-key"];
     const openNextDeployment = new sst.aws.Nextjs("MyWeb", {
       link: [
-        // usersTable,
         groupsTable,
         promptAnswersBucket,
-        // teamsTable,
-        // messagesTable
       ],
       environment: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
@@ -130,13 +72,30 @@ export default $config({
 
     return {
       timestamp: new Date().toISOString(),
-      // NextJS_Resources: openNextDeployment.nodes,
-      // DynamoDB_Table_Resources: [
-      //   { usersTable: usersTable.nodes },
-      //   { groupsTable: groupsTable.nodes },
-      //   { teamsTable: teamsTable.nodes },
-      //   { messagesTable: messagesTable.nodes },
-      // ],
+      NextJS_Resources: openNextDeployment.nodes,
+      DynamoDB_Table_Resources: [
+        { groupsTable: groupsTable.nodes },
+      ],
     };
   },
+  console: {
+    autodeploy: {
+      // on git push to main event, build and deploy to production
+      target(event) {
+        if (
+          event.type === "branch" &&
+          event.branch === "main" &&
+          event.action === "pushed"
+         ) {
+          return { stage: "production" };
+        }
+      },
+      runner: {
+        engine: "codebuild",
+        architecture: "x86_64",
+        compute: "medium",
+        timeout: "0.2 hours",
+      },
+    },
+  }
 });
