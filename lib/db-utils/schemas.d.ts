@@ -3,6 +3,9 @@ import { UserId, GroupId } from "@types/globals";
 export type TeamId = number;
 export type TeamUniqueId = string;
 
+/**
+ * Represents the joined subtables for a group.
+ */
 export type GroupItemMap = {
   info: GroupInfoSubtable;
   members: GroupMembersSubtable;
@@ -18,6 +21,10 @@ export type Team = {
   members: UserId[]; // simple list of the members in the team
 };
 
+/**
+ * Represents entries in the teams subtable of the dynamodb groups table.
+ * used to store the teams generated for a group.
+ */
 export interface TeamSubtable {
   groupId: GroupId; // dynamodb hash key (primary index)
   subTable: "teams"; // dynamodb sort key (secondary index)
@@ -33,6 +40,10 @@ export type ImmutableTeamSubtableProperties = Omit<
 
 // ------------------------------------------------------------------------------------------------
 
+/**
+ * Represents entries in the info subtable of the dynamodb groups table.
+ * used to store the info for a group.
+ */
 export interface GroupInfoSubtable {
   groupId: GroupId; // dynamodb hash key (primary index)
   subTable: "info"; // dynamodb sort key (secondary index)
@@ -60,6 +71,10 @@ export type Member = {
   promptAnswer: string; // link to an s3 object where the user's prompt answer is stored
 };
 
+/**
+ * Represents entries in the members subtable of the dynamodb groups table.
+ * used to store the members of a group.
+ */
 export interface GroupMembersSubtable {
   groupId: GroupId; // dynamodb hash key (primary index)
   subTable: "members"; // dynamodb sort key (secondary index)
