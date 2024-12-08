@@ -86,6 +86,13 @@ export async function generateEmbeddingsWithContext(
 //   return completionResponse.choices[0].message.content?.trim() ?? "";
 // }
 
+/**
+ * Summarizes a cluster of responses (team).
+ * @param members - An array of user identifiers.
+ * @param contextPrompt - The prompt to use as context for the summary.
+ * @param responses - A record of user identifiers to their responses.
+ * @returns A summary of the cluster.
+ */
 export async function summarizeCluster(
   members: string[],
   contextPrompt: string,
