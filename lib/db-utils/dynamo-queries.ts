@@ -290,7 +290,6 @@ export async function getTeams(groupId: GroupId): Promise<TeamSubtable | null> {
 
 /**
  * Replaces the entire TeamSubtable entry in the database with a new one.
- * @param groupId - The ID of the group to update the teams for.
  * @param newTeamsTable - The new TeamSubtable to replace the existing one.
  * @throws any errors that occur during the database operation.
  */

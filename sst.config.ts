@@ -52,6 +52,13 @@ export default $config({
     const NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = new sst.Secret("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
     const CLERK_SECRET_KEY = new sst.Secret("CLERK_SECRET_KEY");
     const OPENAI_API_KEY = new sst.Secret("OPENAI_API_KEY");
+    const FIREBASE_API_KEY = new sst.Secret("FIREBASE_API_KEY");
+    const FIREBASE_AUTH_DOMAIN = new sst.Secret("FIREBASE_AUTH_DOMAIN");
+    const FIREBASE_PROJECT_ID = new sst.Secret("FIREBASE_PROJECT_ID");
+    const FIREBASE_STORAGE_BUCKET = new sst.Secret("FIREBASE_STORAGE_BUCKET");
+    const FIREBASE_MESSAGING_SENDER_ID = new sst.Secret("FIREBASE_MESSAGING_SENDER_ID");
+    const FIREBASE_APP_ID = new sst.Secret("FIREBASE_APP_ID");
+    const FIREBASE_MEASUREMENT_ID = new sst.Secret("FIREBASE_MEASUREMENT_ID");
 
     // Init the NextJS app resource cluster
     // Originally set up with these values (check the sst source for the actual current values):
@@ -66,6 +73,13 @@ export default $config({
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.value,
         CLERK_SECRET_KEY: CLERK_SECRET_KEY.value,
         OPENAI_API_KEY: OPENAI_API_KEY.value,
+        FIREBASE_API_KEY: FIREBASE_API_KEY.value,
+        FIREBASE_AUTH_DOMAIN: FIREBASE_AUTH_DOMAIN.value,
+        FIREBASE_PROJECT_ID: FIREBASE_PROJECT_ID.value,
+        FIREBASE_STORAGE_BUCKET: FIREBASE_STORAGE_BUCKET.value,
+        FIREBASE_MESSAGING_SENDER_ID: FIREBASE_MESSAGING_SENDER_ID.value,
+        FIREBASE_APP_ID: FIREBASE_APP_ID.value,
+        FIREBASE_MEASUREMENT_ID: FIREBASE_MEASUREMENT_ID.value,
       },
       path: ".",
     });

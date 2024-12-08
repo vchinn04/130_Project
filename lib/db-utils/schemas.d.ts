@@ -25,7 +25,7 @@ export type Team = {
  * Represents entries in the teams subtable of the dynamodb groups table.
  * used to store the teams generated for a group.
  */
-export interface TeamSubtable {
+export type TeamSubtable = {
   groupId: GroupId; // dynamodb hash key (primary index)
   subTable: "teams"; // dynamodb sort key (secondary index)
   generatedAt: Date; // the date and time the teams were last generated
@@ -44,7 +44,7 @@ export type ImmutableTeamSubtableProperties = Omit<
  * Represents entries in the info subtable of the dynamodb groups table.
  * used to store the info for a group.
  */
-export interface GroupInfoSubtable {
+export type GroupInfoSubtable = {
   groupId: GroupId; // dynamodb hash key (primary index)
   subTable: "info"; // dynamodb sort key (secondary index)
   createdAt: Date; // the date and time the group was created
@@ -75,7 +75,7 @@ export type Member = {
  * Represents entries in the members subtable of the dynamodb groups table.
  * used to store the members of a group.
  */
-export interface GroupMembersSubtable {
+export type GroupMembersSubtable = {
   groupId: GroupId; // dynamodb hash key (primary index)
   subTable: "members"; // dynamodb sort key (secondary index)
   members: Record<UserId, Member>; // json object of the members in the group
