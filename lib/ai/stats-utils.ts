@@ -55,7 +55,10 @@ export function balanceClusters(
 }
 
 
-interface ClusterOptimizationOptions {
+/**
+ * Options for cluster optimization.
+ */
+export type ClusterOptimizationOptions = {
   targetSize: number;
   maxIterations?: number;
   similarityThreshold?: number;
@@ -65,7 +68,10 @@ interface ClusterOptimizationOptions {
  * Optimizes clusters post k-means by balancing size while maintaining similarity.
  * @param clusters - Initial clusters from k-means
  * @param embeddings - Original embeddings used for clustering
- * @param options - Optimization parameters
+ * @param options - Optimization options parameters
+ * @param options.targetSize - The target size of each cluster
+ * @param options.maxIterations - The maximum number of iterations to perform
+ * @param options.similarityThreshold - The similarity threshold for moving members between clusters
  */
 export function optimizeClusters(
   clusters: Record<number, string[]>,

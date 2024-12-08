@@ -4,6 +4,44 @@ import OpenAI from "openai";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 /**
+ * Augments responses with commentary from GPT-4.
+ * @param responses - A record of user Identifiers to their responses.
+ * @param contextPrompt - The prompt to use as context for the analysis.
+ * @returns A record of user Identifiers with their responses and commentary.
+ */
+export async function augmentResponsesWithCommentary(
+  responses: Record<string, string>,
+  contextPrompt: string
+): Promise<Record<string, string>> {
+  const augmentedResponses = await Promise.all(
+    Object.entries(responses).map(async ([userId, response]) => {
+      const prompt = `
+        Context: ${contextPrompt}
+
+        Original Response: ${response}
+
+        Provide a brief, specific analysis of this response in relation to the context. Focus on:
+        1. Key strengths or unique qualities mentioned
+        2. Potential team contribution areas
+        3. Any notable alignment or misalignment with the context
+
+        Keep your analysis concise, direct, and specific. Do not use generic language.`;
+
+      const completionResponse = await openai.chat.completions.create({
+        model: "gpt-4o-2024-11-20",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 150,
+      });
+
+      const commentary = completionResponse.choices[0].message.content?.trim() ?? "";
+      return [userId, `${response}\n\nAnalysis:\n${commentary}`] as const;
+    })
+  );
+
+  return Object.fromEntries(augmentedResponses);
+}
+
+/**
  * Generate embeddings for a given set of responses with a context prompt.
  * @param responses - A record of user IDs to their responses.
  * @param contextPrompt - The prompt to use as context for the embeddings.
@@ -30,7 +68,6 @@ export async function generateEmbeddingsWithContext(
   return Object.fromEntries(embeddingResults);
 }
 
-
 // export async function summarizeCluster(
 //   members: string[],
 //   contextPrompt: string
@@ -49,14 +86,21 @@ export async function generateEmbeddingsWithContext(
 //   return completionResponse.choices[0].message.content?.trim() ?? "";
 // }
 
+/**
+ * Summarizes a cluster of responses (team).
+ * @param members - An array of user identifiers.
+ * @param contextPrompt - The prompt to use as context for the summary.
+ * @param responses - A record of user identifiers to their responses.
+ * @returns A summary of the cluster.
+ */
 export async function summarizeCluster(
   members: string[],
   contextPrompt: string,
-  responses: Record<string, string>  // Add responses parameter
+  responses: Record<string, string> // Add responses parameter
 ): Promise<string> {
   // Gather all responses from cluster members
   const clusterResponses = members
-    .map(memberId => responses[memberId])
+    .map((memberId) => responses[memberId])
     .filter(Boolean)
     .join("\n\n");
 
@@ -76,7 +120,7 @@ export async function summarizeCluster(
   `;
 
   const completionResponse = await openai.chat.completions.create({
-    model: "gpt-4-0125-preview",  // Updated to latest model
+    model: "gpt-4o-2024-11-20", // Updated to latest model
     messages: [{ role: "user", content: prompt }],
     max_tokens: 200,
   });

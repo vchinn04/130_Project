@@ -23,5 +23,14 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules","sst.config.ts"]
+  "exclude": ["node_modules", "sst.config.ts"],
+  "typedocOptions": {
+    "entryPoints": [
+      "./lib/**/*.ts",
+      "./app/**/*.tsx",
+      "./app/**/*.ts",
+    ],
+    "excludeNotDocumented": true,
+    "out": "./out"
+  }
 }

@@ -1,4 +1,4 @@
-import { generateEmbeddingsWithContext, summarizeCluster } from "@/lib/ai/openai-utils";
+import { generateEmbeddingsWithContext, summarizeCluster, augmentResponsesWithCommentary } from "@/lib/ai/openai-utils";
 import { balanceClusters, clusterEmbeddings, optimizeClusters } from "@/lib/ai/stats-utils";
 import { getPromptAnswer } from "@/lib/db-utils/bucket-queries";
 import { getGroupMembers, updateTeamsTable } from "@/lib/db-utils/dynamo-queries";
@@ -64,8 +64,11 @@ export async function GET(
 
     const targetSize = totalUsers / k;
 
-    // Generate embeddings with context
-    const embeddings = await generateEmbeddingsWithContext(responses, prompt);
+    // Augment responses with AI commentary
+    const augmentedResponses = await augmentResponsesWithCommentary(responses, prompt);
+
+    // Generate embeddings with context (using augmented responses)
+    const embeddings = await generateEmbeddingsWithContext(augmentedResponses, prompt);
 
     // Perform initial clustering
     const initialClusters = await clusterEmbeddings(embeddings, k);
